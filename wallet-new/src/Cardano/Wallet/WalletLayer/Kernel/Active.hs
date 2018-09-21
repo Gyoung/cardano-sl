@@ -1,29 +1,39 @@
 module Cardano.Wallet.WalletLayer.Kernel.Active (
     pay
   , estimateFees
+  , createUnsignedTx
   , redeemAda
   ) where
 
 import           Universum
 
+import           Data.Coerce (coerce)
+import           Data.Default (def)
+import qualified Data.List.NonEmpty as NE
 import           Data.Time.Units (Second)
 
-import           Pos.Chain.Txp (Tx)
+import           Pos.Chain.Txp (Tx (..), TxAttributes, TxOut (..),
+                     TxOutAux (..), toaOut, txOutAddress)
 import           Pos.Core (Address, Coin, TxFeePolicy)
 import           Pos.Crypto (PassPhrase)
 
 import           Cardano.Wallet.API.V1.Types (unV1)
 import qualified Cardano.Wallet.API.V1.Types as V1
 import qualified Cardano.Wallet.Kernel as Kernel
+import qualified Cardano.Wallet.Kernel.Addresses as Kernel
 import           Cardano.Wallet.Kernel.CoinSelection.FromGeneric
                      (CoinSelectionOptions (..), ExpenseRegulation,
-                     InputGrouping, newOptions)
+                     InputGrouping, UnsignedTx (..), newOptions)
+import           Cardano.Wallet.Kernel.DB.AcidState (DB)
 import qualified Cardano.Wallet.Kernel.DB.HdWallet as HD
+import           Cardano.Wallet.Kernel.DB.Read (lookupCardanoAddress)
 import           Cardano.Wallet.Kernel.DB.TxMeta.Types
 import qualified Cardano.Wallet.Kernel.NodeStateAdaptor as Node
 import qualified Cardano.Wallet.Kernel.Transactions as Kernel
+import qualified Cardano.Wallet.Kernel.Types as Kernel
 import           Cardano.Wallet.WalletLayer (EstimateFeesError (..),
-                     NewPaymentError (..), RedeemAdaError (..))
+                     NewPaymentError (..), NewUnsignedTransactionError (..),
+                     RedeemAdaError (..))
 import           Cardano.Wallet.WalletLayer.ExecutionTimeLimit
                      (limitExecutionTimeTo)
 import           Cardano.Wallet.WalletLayer.Kernel.Conv
@@ -60,6 +70,118 @@ estimateFees activeWallet grouping regulation payment = liftIO $ do
                                    setupPayment policy grouping regulation payment
         withExceptT EstimateFeesError $ ExceptT $
           Kernel.estimateFees activeWallet opts accId payees
+
+-- | Creates a raw transaction.
+--
+-- NOTE: this function does /not/ perform a payment, it just creates a new
+-- transaction which will be signed and submitted to the blockchain later.
+-- It returns a transaction and a list of source addresses and corresponding
+-- derivation paths.
+createUnsignedTx :: MonadIO m
+                 => Kernel.ActiveWallet
+                 -> InputGrouping
+                 -> ExpenseRegulation
+                 -> V1.Payment
+                 -> m (Either NewUnsignedTransactionError
+                             ( Tx
+                             , NonEmpty (Address, [V1.AddressLevel])
+                             )
+                      )
+createUnsignedTx activeWallet grouping regulation payment = liftIO $ do
+    let spendingPassword = maybe mempty coerce $ V1.pmtSpendingPassword payment
+        walletPassive = Kernel.walletPassive activeWallet
+    policy <- Node.getFeePolicy (Kernel.walletPassive activeWallet ^. Kernel.walletNode)
+    res <- runExceptT $ do
+        (opts, accId, payees) <- withExceptT NewTransactionWalletIdDecodingFailed $
+            setupPayment policy grouping regulation payment
+        (db, unsignedTx, utxo) <- withExceptT NewUnsignedTransactionError $ ExceptT $
+            Kernel.newUnsignedTransaction activeWallet opts accId payees
+        return (db, unsignedTx, utxo, accId)
+    case res of
+        Left e -> return (Left e)
+        Right (db, unsignedTx, _utxo, srcAccId) -> do
+            -- We have to provide source addresses and derivation paths for this transaction.
+            -- It will be used by external party to provide a proof that it has a right to
+            -- spend this money.
+            let srcAddresses    = extractSrcAddressesFrom unsignedTx
+                srcHdAddresses  = NE.map (toHdAddress db) srcAddresses
+                derivationPaths = buildDerivationPathsFor srcHdAddresses srcAccId
+            -- Now we have to generate the change addresses needed,
+            -- because 'newUnsignedTransaction' function cannot do it by itself.
+            changeAddressesRes <- runExceptT $ withExceptT Kernel.NewTransactionErrorCreateAddressFailed $
+                genChangeOuts (utxChange unsignedTx) srcAccId spendingPassword walletPassive
+            case changeAddressesRes of
+                Left e -> return (Left $ NewUnsignedTransactionError e)
+                Right changeAddresses -> do
+                    let allOutputs = (NE.toList $ utxOutputs unsignedTx) ++ changeAddresses
+                        unsignedTxWithChange = unsignedTx { utxOutputs = NE.fromList allOutputs }
+                        tx = toRegularTx unsignedTxWithChange
+                    return (Right (tx, NE.zip srcAddresses derivationPaths))
+  where
+    -- | Generates the list of change outputs from a list of change coins.
+    genChangeOuts :: MonadIO m
+                  => [Coin]
+                  -> HD.HdAccountId
+                  -> PassPhrase
+                  -> Kernel.PassiveWallet
+                  -> ExceptT Kernel.CreateAddressError m [TxOutAux]
+    genChangeOuts changeCoins srcAccountId spendingPassword walletPassive =
+        forM changeCoins $ \change -> do
+            changeAddr <- genChangeAddr srcAccountId spendingPassword walletPassive
+            return TxOutAux {
+                toaOut = TxOut
+                    { txOutAddress = changeAddr
+                    , txOutValue   = change
+                    }
+            }
+
+    genChangeAddr :: MonadIO m
+                  => HD.HdAccountId
+                  -> PassPhrase
+                  -> Kernel.PassiveWallet
+                  -> ExceptT Kernel.CreateAddressError m Address
+    genChangeAddr srcAccountId spendingPassword walletPassive = ExceptT $ liftIO $
+        Kernel.createAddress spendingPassword
+                             (Kernel.AccountIdHdRnd srcAccountId)
+                             walletPassive
+
+    -- Take addresses that correspond to inputs of transaction.
+    extractSrcAddressesFrom :: UnsignedTx -> NonEmpty Address
+    extractSrcAddressesFrom unsignedTx =
+        NE.map (\(_, outAux) -> txOutAddress . toaOut $ outAux) $ utxOwnedInputs unsignedTx
+
+    buildDerivationPathsFor :: NonEmpty HD.HdAddress
+                            -> HD.HdAccountId
+                            -> NonEmpty [V1.AddressLevel]
+    buildDerivationPathsFor srcAddresses srcAccountId =
+        flip NE.map srcAddresses $ \(HD.HdAddress srcAddressId _) ->
+            let HD.HdAccountId _ (HD.HdAccountIx srcAccIndex)  = srcAccountId
+                HD.HdAddressId _ (HD.HdAddressIx srcAddrIndex) = srcAddressId
+            in [ V1.word32ToAddressLevel srcAccIndex
+               , V1.word32ToAddressLevel srcAddrIndex
+               ]
+
+    toHdAddress :: DB
+                -> Address
+                -> HD.HdAddress
+    toHdAddress db srcAddress =
+        -- Sine 'srcAddress' is returned by 'newUnsignedTransaction'
+        -- we assume that this address is valid so we definitely have
+        -- corresponding 'HdAddress'.
+        either (error "Impossible happened: source address doesn't have corresponding HD-address!")
+               id
+               (lookupCardanoAddress db srcAddress)
+
+    -- Convert 'UnsignedTx' to 'Tx', this regular 'Tx'
+    -- will be signed later (technically - the hash of the
+    -- transaction will be signed).
+    toRegularTx :: UnsignedTx -> Tx
+    toRegularTx unsignedTx =
+        let inputs  = NE.map fst $ utxOwnedInputs unsignedTx
+            outputs = NE.map toaOut $ utxOutputs unsignedTx
+            -- Currently all transactions have default (actually - empty) attributes.
+            attribs = def :: TxAttributes
+        in UnsafeTx inputs outputs attribs
 
 -- | Redeem an Ada voucher
 --
