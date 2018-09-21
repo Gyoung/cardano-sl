@@ -712,3 +712,21 @@ benchmark cardano-sl-wallet-new-bench
                         BangPatterns
                         TemplateHaskell
                         ScopedTypeVariables
+
+test-suite demo
+  type:               exitcode-stdio-1.0
+
+  default-language:   Haskell2010
+  default-extensions: NoImplicitPrelude
+                      FlexibleContexts
+                      OverloadedStrings
+                      RecordWildCards
+                      ScopedTypeVariables
+
+  hs-source-dirs:     demo
+  main-is:            Main.hs
+
+  build-depends:      base
+                    , async
+                    , cardano-sl-wallet-new
+                    , universum
