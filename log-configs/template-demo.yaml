@@ -6,5 +6,5 @@ rotation:
 loggerTree:
   severity: Debug+
   files:
-    - {{file}}.pub
-    - {{file}}
+    - tmpFileName.pub
+    - tmpFileName
