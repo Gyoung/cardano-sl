@@ -238,6 +238,7 @@ library
                      , sqlite-simple-errors
                      , stm
                      , strict
+                     , strict-concurrency
                      , swagger2
                      , text
                      , time

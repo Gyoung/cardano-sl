@@ -44,6 +44,7 @@ import           Cardano.Wallet.Kernel.Keystore (Keystore)
 import           Cardano.Wallet.Kernel.NodeStateAdaptor (NodeStateAdaptor)
 import           Cardano.Wallet.Kernel.Submission (WalletSubmission)
 import           Cardano.Wallet.Kernel.Types (WalletId)
+import qualified Cardano.Wallet.Kernel.Util.Strict as Strict
 
 {-------------------------------------------------------------------------------
   Restoration status
@@ -115,7 +116,7 @@ data PassiveWallet = PassiveWallet {
       -- the active part actually sends stuff across the network. Fortunately,
       -- we already have this split: the submission layer itself is just a
       -- pure data structure, and the sending happens in a separate thread.
-    , _walletSubmission      :: MVar WalletSubmission
+    , _walletSubmission      :: Strict.MVar WalletSubmission
 
       -- | Wallet restoration tasks. Wallets that are in the midst of a restoration
       -- will be doing background work to restore the history. This map holds a
@@ -124,7 +125,7 @@ data PassiveWallet = PassiveWallet {
       --
       -- The invariant is that a WalletId should appear in this map if and only if
       -- that wallet is still undergoing restoration.
-    , _walletRestorationTask :: MVar (Map WalletId WalletRestorationInfo)
+    , _walletRestorationTask :: Strict.MVar (Map WalletId WalletRestorationInfo)
     }
 
 makeLenses ''PassiveWallet

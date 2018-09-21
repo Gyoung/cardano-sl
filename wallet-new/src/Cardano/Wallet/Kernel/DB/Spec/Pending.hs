@@ -1,4 +1,5 @@
-{-# LANGUAGE ViewPatterns #-}
+{-# LANGUAGE DeriveGeneric #-}
+{-# LANGUAGE ViewPatterns  #-}
 
 -- | Pending transactions
 --
@@ -60,7 +61,9 @@ import qualified UTxO.Util as Util
 type UnderlyingMap = Map Core.TxId Core.TxAux
 
 -- | Pending transactions
-newtype Pending = Pending (InDb UnderlyingMap) deriving Eq
+newtype Pending = Pending (InDb UnderlyingMap) deriving (Eq, Generic)
+
+instance NFData Pending
 
 deriveSafeCopy 1 'base ''Pending
 
