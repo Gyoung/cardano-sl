@@ -81,7 +81,7 @@ applyBlock pw@PassiveWallet{..} b = do
       -- we decrement this counter and when it reaches 0, we enforce a new
       -- checkpoint.
       createCheckpointIfNeeded :: IO ()
-      createCheckpointIfNeeded = do
+      createCheckpointIfNeeded = const (pure ()) $ do
           -- Look at the 'ResolvedBlock' 's 'SlotId', and assess if a new
           -- checkpoint is needed by doing @localBlockIx `modulo` someConstant@
           -- where @someConstant@ is chosen to be 1000.
