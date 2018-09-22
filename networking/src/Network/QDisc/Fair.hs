@@ -9,6 +9,7 @@ module Network.QDisc.Fair (
 
     ) where
 
+import           Prelude
 import           Control.Concurrent (threadDelay)
 import           Control.Concurrent.STM
 import           Data.Time.Units (Microsecond)

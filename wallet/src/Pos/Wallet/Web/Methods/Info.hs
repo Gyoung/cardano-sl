@@ -6,11 +6,11 @@ module Pos.Wallet.Web.Methods.Info
 
 import           Universum
 
-import           Paths_cardano_sl_wallet (version)
 import           Pos.Chain.Update (HasUpdateConfiguration, curSoftwareVersion)
 import           Pos.Util.CompileInfo (HasCompileInfo, compileInfo,
                      ctiGitRevision)
 import           Pos.Wallet.Web.ClientTypes (ApiVersion (..), ClientInfo (..))
+import Data.Version (Version(Version))
 
 getClientInfo :: (HasCompileInfo, HasUpdateConfiguration, Applicative m) => m ClientInfo
 getClientInfo =
@@ -18,6 +18,6 @@ getClientInfo =
         ClientInfo
         { ciGitRevision = ctiGitRevision compileInfo
         , ciSoftwareVersion = curSoftwareVersion
-        , ciCabalVersion = version
+        , ciCabalVersion = Version [ 1, 3, 0 ] []
         , ciApiVersion = ApiVersion0
         }

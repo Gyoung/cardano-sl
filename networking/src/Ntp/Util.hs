@@ -29,6 +29,7 @@ module Ntp.Util
     , logError
     ) where
 
+import Prelude
 import           Control.Exception (Exception, IOException, catch, throw)
 import           Control.Monad (void)
 import           Data.Bifunctor (Bifunctor (..))

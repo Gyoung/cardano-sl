@@ -1,0 +1,977 @@
+name:    everything
+version: 1.3.0
+build-type:          Simple
+cabal-version:       >=1.10
+license:             MIT
+
+library
+  hs-source-dirs:      acid-state-exts/src
+                    , binary/src
+                    , chain/src
+                    , chain/test
+                    , client/src
+                    , core/src
+                    , core/test
+                    , crypto
+                    , crypto/test
+                    , db/src
+                    , infra/src
+                    , lib/src
+                    , networking/src
+                    , node-ipc/src
+                    , util/src
+                    , util/test
+                    , utxo/src
+                    , wallet-new/src
+                    , tools/src
+                    , wallet/src
+                    , x509/src
+  exposed-modules:    Cardano.Wallet.Action
+                    , Cardano.Wallet.LegacyAction
+                    , Cardano.Wallet.Server.CLI
+                    , Pos.Chain.Genesis
+                    , Pos.Client.CLI
+                    , Pos.Core
+                    , Pos.Core.Common.AddrStakeDistribution
+                    , Pos.Crypto
+                    , Pos.DB.Block
+                    , Pos.DB.Class
+                    , Pos.DB.Rocks
+                    , Pos.DB.Update
+                    , Pos.Infra.Reporting.Http
+                    , Pos.Infra.Reporting.Wlog
+                    , Pos.Launcher
+                    , Pos.Launcher.Configuration
+                    , Pos.Network.Update.Download
+                    , Pos.Tools.Launcher.Environment
+                    , Pos.Tools.Launcher.Logging
+                    , Pos.Util
+                    , Pos.Util.CompileInfo
+                    , Pos.Util.Log.LoggerConfig
+                    , Pos.Util.Wlog
+                    , Data.X509.Extra
+  other-modules:      Pos.Client.CLI.NodeOptions
+                    , Cardano.NodeIPC
+                    , Cardano.Wallet.API
+                    , Cardano.Wallet.API
+                    , Cardano.Wallet.API.Indices
+                    , Cardano.Wallet.API.Indices
+                    , Cardano.Wallet.API.Internal
+                    , Cardano.Wallet.API.Internal.Handlers
+                    , Cardano.Wallet.API.Internal.LegacyHandlers
+                    , Cardano.Wallet.API.Request
+                    , Cardano.Wallet.API.Request.Filter
+                    , Cardano.Wallet.API.Request.Pagination
+                    , Cardano.Wallet.API.Request.Parameters
+                    , Cardano.Wallet.API.Request.Sort
+                    , Cardano.Wallet.API.Response
+                    , Cardano.Wallet.API.Response.Filter.IxSet
+                    , Cardano.Wallet.API.Response.JSend
+                    , Cardano.Wallet.API.Response.Sort.IxSet
+                    , Cardano.Wallet.API.Types
+                    , Cardano.Wallet.API.Types.UnitOfMeasure
+                    , Cardano.Wallet.API.V0
+                    , Cardano.Wallet.API.V0.Handlers 
+                    , Cardano.Wallet.API.V0.Types
+                    , Cardano.Wallet.API.V1
+                    , Cardano.Wallet.API.V1.Accounts 
+                    , Cardano.Wallet.API.V1.Addresses
+                    , Cardano.Wallet.API.V1.Errors   
+                    , Cardano.Wallet.API.V1.Generic  
+                    , Cardano.Wallet.API.V1.Handlers 
+                    , Cardano.Wallet.API.V1.Handlers.Accounts
+                    , Cardano.Wallet.API.V1.Handlers.Addresses
+                    , Cardano.Wallet.API.V1.Handlers.Info
+                    , Cardano.Wallet.API.V1.Handlers.Settings
+                    , Cardano.Wallet.API.V1.Handlers.Transactions
+                    , Cardano.Wallet.API.V1.Handlers.Wallets
+                    , Cardano.Wallet.API.V1.Headers  
+                    , Cardano.Wallet.API.V1.Info
+                    , Cardano.Wallet.API.V1.LegacyHandlers
+                    , Cardano.Wallet.API.V1.LegacyHandlers.Accounts
+                    , Cardano.Wallet.API.V1.LegacyHandlers.Addresses
+                    , Cardano.Wallet.API.V1.LegacyHandlers.Info
+                    , Cardano.Wallet.API.V1.LegacyHandlers.Instances
+                    , Cardano.Wallet.API.V1.LegacyHandlers.Settings
+                    , Cardano.Wallet.API.V1.LegacyHandlers.Transactions
+                    , Cardano.Wallet.API.V1.LegacyHandlers.Wallets
+                    , Cardano.Wallet.API.V1.Migration
+                    , Cardano.Wallet.API.V1.Migration.Monads
+                    , Cardano.Wallet.API.V1.Migration.Types
+                    , Cardano.Wallet.API.V1.Parameters
+                    , Cardano.Wallet.API.V1.ReifyWalletError
+                    , Cardano.Wallet.API.V1.Settings 
+                    , Cardano.Wallet.API.V1.Swagger  
+                    , Cardano.Wallet.API.V1.Swagger.Example
+                    , Cardano.Wallet.API.V1.Transactions
+                    , Cardano.Wallet.API.V1.Types
+                    , Cardano.Wallet.API.V1.Wallets  
+                    , Cardano.Wallet.API.WIP
+                    , Cardano.Wallet.API.WIP.Handlers
+                    , Cardano.Wallet.API.WIP.LegacyHandlers
+                    , Cardano.Wallet.Client
+                    , Cardano.Wallet.Kernel
+                    , Cardano.Wallet.Kernel.Accounts 
+                    , Cardano.Wallet.Kernel.Actions  
+                    , Cardano.Wallet.Kernel.Addresses
+                    , Cardano.Wallet.Kernel.BIP39
+                    , Cardano.Wallet.Kernel.BListener
+                    , Cardano.Wallet.Kernel.CoinSelection
+                    , Cardano.Wallet.Kernel.CoinSelection.FromGeneric
+                    , Cardano.Wallet.Kernel.CoinSelection.Generic
+                    , Cardano.Wallet.Kernel.CoinSelection.Generic.Fees
+                    , Cardano.Wallet.Kernel.CoinSelection.Generic.Grouped
+                    , Cardano.Wallet.Kernel.CoinSelection.Generic.LargestFirst
+                    , Cardano.Wallet.Kernel.CoinSelection.Generic.Random
+                    , Cardano.Wallet.Kernel.DB.AcidState
+                    , Cardano.Wallet.Kernel.DB.BlockContext
+                    , Cardano.Wallet.Kernel.DB.BlockMeta
+                    , Cardano.Wallet.Kernel.DB.Compression
+                    , Cardano.Wallet.Kernel.DB.HdWallet
+                    , Cardano.Wallet.Kernel.DB.HdWallet.Create
+                    , Cardano.Wallet.Kernel.DB.HdWallet.Delete
+                    , Cardano.Wallet.Kernel.DB.HdWallet.Derivation
+                    , Cardano.Wallet.Kernel.DB.HdWallet.Read
+                    , Cardano.Wallet.Kernel.DB.HdWallet.Update
+                    , Cardano.Wallet.Kernel.DB.InDb  
+                    , Cardano.Wallet.Kernel.DB.Read  
+                    , Cardano.Wallet.Kernel.DB.Resolved
+                    , Cardano.Wallet.Kernel.DB.Spec  
+                    , Cardano.Wallet.Kernel.DB.Spec.Pending
+                    , Cardano.Wallet.Kernel.DB.Spec.Read
+                    , Cardano.Wallet.Kernel.DB.Spec.Update
+                    , Cardano.Wallet.Kernel.DB.Sqlite
+                    , Cardano.Wallet.Kernel.DB.TxMeta
+                    , Cardano.Wallet.Kernel.DB.TxMeta.Types
+                    , Cardano.Wallet.Kernel.DB.Updates
+                    , Cardano.Wallet.Kernel.DB.Util.AcidState
+                    , Cardano.Wallet.Kernel.DB.Util.IxSet
+                    , Cardano.Wallet.Kernel.DB.Util.Zoomable
+                    , Cardano.Wallet.Kernel.Decrypt  
+                    , Cardano.Wallet.Kernel.Diffusion
+                    , Cardano.Wallet.Kernel.Internal 
+                    , Cardano.Wallet.Kernel.Invariants
+                    , Cardano.Wallet.Kernel.Keystore 
+                    , Cardano.Wallet.Kernel.Migration
+                    , Cardano.Wallet.Kernel.Mode
+                    , Cardano.Wallet.Kernel.NodeStateAdaptor
+                    , Cardano.Wallet.Kernel.Pending  
+                    , Cardano.Wallet.Kernel.PrefilterTx
+                    , Cardano.Wallet.Kernel.Read
+                    , Cardano.Wallet.Kernel.Restore  
+                    , Cardano.Wallet.Kernel.Submission
+                    , Cardano.Wallet.Kernel.Submission.Worker
+                    , Cardano.Wallet.Kernel.Transactions
+                    , Cardano.Wallet.Kernel.Types
+                    , Cardano.Wallet.Kernel.Util.Core
+                    , Cardano.Wallet.Kernel.Util.StrictList
+                    , Cardano.Wallet.Kernel.Util.StrictNonEmpty
+                    , Cardano.Wallet.Kernel.Util.StrictStateT
+                    , Cardano.Wallet.Kernel.Wallets  
+                    , Cardano.Wallet.LegacyServer
+                    , Cardano.Wallet.Orphans
+                    , Cardano.Wallet.Orphans.Aeson   
+                    , Cardano.Wallet.Orphans.Arbitrary
+                    , Cardano.Wallet.Orphans.Bi
+                    , Cardano.Wallet.Server
+                    , Cardano.Wallet.Server
+                    , Cardano.Wallet.Server.LegacyPlugins
+                    , Cardano.Wallet.Server.Middlewares
+                    , Cardano.Wallet.Server.Plugins  
+                    , Cardano.Wallet.Server.Plugins.AcidState
+                    , Cardano.Wallet.TypeLits
+                    , Cardano.Wallet.Types.UtxoStatistics
+                    , Cardano.Wallet.Util
+                    , Cardano.Wallet.Util
+                    , Cardano.Wallet.WalletLayer
+                    , Cardano.Wallet.WalletLayer.ExecutionTimeLimit
+                    , Cardano.Wallet.WalletLayer.Kernel
+                    , Cardano.Wallet.WalletLayer.Kernel.Accounts
+                    , Cardano.Wallet.WalletLayer.Kernel.Active
+                    , Cardano.Wallet.WalletLayer.Kernel.Addresses
+                    , Cardano.Wallet.WalletLayer.Kernel.Conv
+                    , Cardano.Wallet.WalletLayer.Kernel.Info
+                    , Cardano.Wallet.WalletLayer.Kernel.Internal
+                    , Cardano.Wallet.WalletLayer.Kernel.Settings
+                    , Cardano.Wallet.WalletLayer.Kernel.Transactions
+                    , Cardano.Wallet.WalletLayer.Kernel.Wallets
+                    , Network.Broadcast.OutboundQueue
+                    , Network.Broadcast.OutboundQueue.Types
+                    , Node
+                    , Node.Conversation
+                    , Node.Internal
+                    , Node.Message.Class
+                    , Node.Message.Decoder
+                    , Ntp.Client
+                    , Ntp.Packet
+                    , Ntp.Util
+                    , Pos.Behavior
+                    , Pos.Binary
+                    , Pos.Binary.Class
+                    , Pos.Binary.Class.Core
+                    , Pos.Binary.Class.Primitive
+                    , Pos.Binary.Class.TH
+                    , Pos.Chain.Block
+                    , Pos.Chain.Block.Block
+                    , Pos.Chain.Block.Block
+                    , Pos.Chain.Block.Header
+                    , Pos.Chain.Delegation
+                    , Pos.Chain.Delegation.HeavyDlgIndex
+                    , Pos.Chain.Genesis.Config
+                    , Pos.Chain.Lrc
+                    , Pos.Chain.Lrc
+                    , Pos.Chain.Script
+                    , Pos.Chain.Script.Examples
+                    , Pos.Chain.Security
+                    , Pos.Chain.Ssc
+                    , Pos.Chain.Ssc.Types
+                    , Pos.Chain.Txp
+                    , Pos.Chain.Txp.Tx
+                    , Pos.Chain.Update
+                    , Pos.Chain.Update
+                    , Pos.Chain.Update.Poll.Types
+                    , Pos.Client.CLI.Options
+                    , Pos.Client.CLI.Params
+                    , Pos.Client.Txp.History
+                    , Pos.Core.Aeson
+                    , Pos.Core.Aeson.Orphans
+                    , Pos.Core.Attributes
+                    , Pos.Core.Binary
+                    , Pos.Core.Binary.Orphans
+                    , Pos.Core.Chrono
+                    , Pos.Core.Common.AddrAttributes
+                    , Pos.Core.Common.AddrSpendingData
+                    , Pos.Core.Common.Address
+                    , Pos.Core.Common.AddressHash
+                    , Pos.Core.Common.BlockCount
+                    , Pos.Core.Common.ChainDifficulty
+                    , Pos.Core.Common.Coin
+                    , Pos.Core.JsonLog.LogEvents
+                    , Pos.Core.Slotting.Class
+                    , Pos.Core.Slotting.Timestamp
+                    , Pos.Core.Util.LogSafe
+                    , Pos.Crypto.HD
+                    , Pos.Crypto.Hashing
+                    , Pos.Crypto.Scrypt
+                    , Pos.Crypto.Signing.Safe
+                    , Pos.Crypto.Signing.Types.Safe
+                    , Pos.DB.DB
+                    , Pos.DB.Txp.MemState.Metrics
+                    , Pos.Infra.DHT.Real.Param
+                    , Pos.Infra.Network.CLI
+                    , Pos.Infra.Network.Types
+                    , Pos.Infra.Network.Yaml
+                    , Pos.Infra.Util.TimeWarp
+                    , Pos.Launcher.Launcher
+                    , Pos.Launcher.Mode
+                    , Pos.Launcher.Param
+                    , Pos.Launcher.Resource
+                    , Pos.Util.Json.Canonical
+                    , Pos.Util.Log
+                    , Pos.Util.Log.Internal
+                    , Pos.Util.Log.Rotator
+                    , Pos.Util.Log.Scribes
+                    , Pos.Util.Log.Severity
+                    , Pos.Util.Mnemonic
+                    , Pos.Util.Modifier
+                    , Pos.Util.OptParse
+                    , Pos.Util.Some
+                    , Pos.Util.UserPublic
+                    , Pos.Util.Util
+                    , Pos.Util.Wlog.Compatibility
+                    , Pos.Wallet
+                    , Pos.Wallet.Aeson
+                    , Pos.Wallet.Aeson.ClientTypes
+                    , Pos.Wallet.Aeson.Options
+                    , Pos.Wallet.Aeson.Storage
+                    , Pos.Wallet.Aeson.WalletBackup
+                    , Pos.Wallet.Redirect
+                    , Pos.Wallet.WalletMode
+                    , Pos.Wallet.WalletMode
+                    , Pos.Wallet.Web
+                    , Pos.Wallet.Web.Account
+                    , Pos.Wallet.Web.Api
+                    , Pos.Wallet.Web.Assurance
+                    , Pos.Wallet.Web.Assurance
+                    , Pos.Wallet.Web.Backup
+                    , Pos.Wallet.Web.ClientTypes
+                    , Pos.Wallet.Web.ClientTypes.Functions
+                    , Pos.Wallet.Web.ClientTypes.Functions
+                    , Pos.Wallet.Web.ClientTypes.Instances
+                    , Pos.Wallet.Web.ClientTypes.Instances
+                    , Pos.Wallet.Web.ClientTypes.Types
+                    , Pos.Wallet.Web.ClientTypes.Types
+                    , Pos.Wallet.Web.Error
+                    , Pos.Wallet.Web.Error.Types
+                    , Pos.Wallet.Web.Error.Types
+                    , Pos.Wallet.Web.Error.Util
+                    , Pos.Wallet.Web.Methods
+                    , Pos.Wallet.Web.Methods.Backup
+                    , Pos.Wallet.Web.Methods.History
+                    , Pos.Wallet.Web.Methods.History
+                    , Pos.Wallet.Web.Methods.Info
+                    , Pos.Wallet.Web.Methods.Logic
+                    , Pos.Wallet.Web.Methods.Misc
+                    , Pos.Wallet.Web.Methods.Payment
+                    , Pos.Wallet.Web.Methods.Redeem
+                    , Pos.Wallet.Web.Methods.Reporting
+                    , Pos.Wallet.Web.Methods.Restore
+                    , Pos.Wallet.Web.Methods.Txp
+                    , Pos.Wallet.Web.Mode
+                    , Pos.Wallet.Web.Pending
+                    , Pos.Wallet.Web.Pending.Functions
+                    , Pos.Wallet.Web.Pending.Submission
+                    , Pos.Wallet.Web.Pending.Types
+                    , Pos.Wallet.Web.Pending.Types   
+                    , Pos.Wallet.Web.Pending.Util
+                    , Pos.Wallet.Web.Pending.Worker  
+                    , Pos.Wallet.Web.Server
+                    , Pos.Wallet.Web.Server.Handlers 
+                    , Pos.Wallet.Web.Server.Launcher 
+                    , Pos.Wallet.Web.Server.Runner   
+                    , Pos.Wallet.Web.Sockets
+                    , Pos.Wallet.Web.Sockets.ConnSet 
+                    , Pos.Wallet.Web.Sockets.Connection
+                    , Pos.Wallet.Web.Sockets.Notifier
+                    , Pos.Wallet.Web.Sockets.Types   
+                    , Pos.Wallet.Web.State
+                    , Pos.Wallet.Web.State.Acidic
+                    , Pos.Wallet.Web.State.Acidic
+                    , Pos.Wallet.Web.State.State
+                    , Pos.Wallet.Web.State.State
+                    , Pos.Wallet.Web.State.Storage
+                    , Pos.Wallet.Web.State.Storage   
+                    , Pos.Wallet.Web.State.Transactions
+                    , Pos.Wallet.Web.State.Util
+                    , Pos.Wallet.Web.Swagger
+                    , Pos.Wallet.Web.Swagger.Instances.Schema
+                    , Pos.Wallet.Web.Swagger.Instances.Swagger
+                    , Pos.Wallet.Web.Swagger.Spec
+                    , Pos.Wallet.Web.Tracking
+                    , Pos.Wallet.Web.Tracking.BListener
+                    , Pos.Wallet.Web.Tracking.Decrypt
+                    , Pos.Wallet.Web.Tracking.Modifier
+                    , Pos.Wallet.Web.Tracking.Restore
+                    , Pos.Wallet.Web.Tracking.Sync   
+                    , Pos.Wallet.Web.Tracking.Types  
+                    , Pos.Wallet.Web.Util
+                    , Pos.Wallet.Web.Util
+                    , Pos.Web
+                    , Pos.Web.Api
+                    , Pos.Web.Mode
+                    , Pos.Web.Server
+                    , Pos.Web.Types
+                    , Pos.WorkMode
+                    , Pos.WorkMode.Class
+                    , Pos.Worker
+                    , Pos.Worker.Block
+                    , Pos.Worker.Delegation
+                    , Pos.Worker.Ssc
+                    , Pos.Worker.Update
+                    , Serokell.AcidState.ExtendedState
+                    , Serokell.AcidState.Util
+                    , Test.Pos.Util.Orphans
+                    , UTxO.Util
+                    Data.NonEmptySet
+                    Network.Broadcast.OutboundQueue.ConcurrentMultiQueue
+                    Network.QDisc.Fair
+                    Node.Util.Monitor
+                    Pos.Binary.Communication
+                    Pos.Binary.Limit
+                    Pos.Binary.SafeCopy
+                    Pos.Chain.Block.ComponentBlock
+                    Pos.Chain.Block.Configuration
+                    Pos.Chain.Block.Error
+                    Pos.Chain.Block.Genesis
+                    Pos.Chain.Block.HasPrevBlock
+                    Pos.Chain.Block.Header
+                    Pos.Chain.Block.IsHeader
+                    Pos.Chain.Block.JsonLog
+                    Pos.Chain.Block.Logic
+                    Pos.Chain.Block.Logic.Integrity
+                    Pos.Chain.Block.Main
+                    Pos.Chain.Block.Slog
+                    Pos.Chain.Block.Slog.Types
+                    Pos.Chain.Block.Types
+                    Pos.Chain.Block.Util
+                    Pos.Chain.Delegation.Cede
+                    Pos.Chain.Delegation.Cede.Class
+                    Pos.Chain.Delegation.Cede.Types
+                    Pos.Chain.Delegation.Class
+                    Pos.Chain.Delegation.Configuration
+                    Pos.Chain.Delegation.HeavyDlgIndex
+                    Pos.Chain.Delegation.LightDlgIndices
+                    Pos.Chain.Delegation.Payload
+                    Pos.Chain.Delegation.Proof
+                    Pos.Chain.Delegation.Types
+                    Pos.Chain.Genesis.AvvmBalances
+                    Pos.Chain.Genesis.Data
+                    Pos.Chain.Genesis.Delegation
+                    Pos.Chain.Genesis.Generate
+                    Pos.Chain.Genesis.Hash
+                    Pos.Chain.Genesis.Initializer
+                    Pos.Chain.Genesis.NonAvvmBalances
+                    Pos.Chain.Genesis.ProtocolConstants
+                    Pos.Chain.Genesis.Spec
+                    Pos.Chain.Genesis.WStakeholders
+                    Pos.Chain.Lrc.Core
+                    Pos.Chain.Lrc.Error
+                    Pos.Chain.Lrc.Fts
+                    Pos.Chain.Lrc.Genesis
+                    Pos.Chain.Lrc.RichmenComponent
+                    Pos.Chain.Lrc.Types
+                    Pos.Chain.Security.Params
+                    Pos.Chain.Security.Util
+                    Pos.Chain.Ssc.Base
+                    Pos.Chain.Ssc.Behavior
+                    Pos.Chain.Ssc.Commitment
+                    Pos.Chain.Ssc.CommitmentAndOpening
+                    Pos.Chain.Ssc.CommitmentsMap
+                    Pos.Chain.Ssc.Configuration
+                    Pos.Chain.Ssc.Error
+                    Pos.Chain.Ssc.Error.Seed
+                    Pos.Chain.Ssc.Error.Verify
+                    Pos.Chain.Ssc.Functions
+                    Pos.Chain.Ssc.Mem
+                    Pos.Chain.Ssc.Message
+                    Pos.Chain.Ssc.Opening
+                    Pos.Chain.Ssc.OpeningsMap
+                    Pos.Chain.Ssc.Payload
+                    Pos.Chain.Ssc.Proof
+                    Pos.Chain.Ssc.Seed
+                    Pos.Chain.Ssc.Shares
+                    Pos.Chain.Ssc.SharesDistribution
+                    Pos.Chain.Ssc.SharesMap
+                    Pos.Chain.Ssc.Toss
+                    Pos.Chain.Ssc.Toss.Base
+                    Pos.Chain.Ssc.Toss.Class
+                    Pos.Chain.Ssc.Toss.Logic
+                    Pos.Chain.Ssc.Toss.Pure
+                    Pos.Chain.Ssc.Toss.Types
+                    Pos.Chain.Ssc.Types
+                    Pos.Chain.Ssc.VssCertData
+                    Pos.Chain.Ssc.VssCertificate
+                    Pos.Chain.Ssc.VssCertificatesMap
+                    Pos.Chain.Txp.Base
+                    Pos.Chain.Txp.Configuration
+                    Pos.Chain.Txp.Error
+                    Pos.Chain.Txp.GenesisUtxo
+                    Pos.Chain.Txp.Toil
+                    Pos.Chain.Txp.Toil.Failure
+                    Pos.Chain.Txp.Toil.Logic
+                    Pos.Chain.Txp.Toil.Monad
+                    Pos.Chain.Txp.Toil.Stakes
+                    Pos.Chain.Txp.Toil.Types
+                    Pos.Chain.Txp.Toil.Utxo
+                    Pos.Chain.Txp.Toil.Utxo.Functions
+                    Pos.Chain.Txp.Toil.Utxo.Util
+                    Pos.Chain.Txp.Topsort
+                    Pos.Chain.Txp.Tx
+                    Pos.Chain.Txp.TxAux
+                    Pos.Chain.Txp.TxMsg
+                    Pos.Chain.Txp.TxOutAux
+                    Pos.Chain.Txp.TxPayload
+                    Pos.Chain.Txp.TxProof
+                    Pos.Chain.Txp.TxWitness
+                    Pos.Chain.Txp.Undo
+                    Pos.Chain.Update.ApplicationName
+                    Pos.Chain.Update.BlockVersion
+                    Pos.Chain.Update.BlockVersionData
+                    Pos.Chain.Update.BlockVersionModifier
+                    Pos.Chain.Update.Configuration
+                    Pos.Chain.Update.Constants
+                    Pos.Chain.Update.Data
+                    Pos.Chain.Update.Params
+                    Pos.Chain.Update.Payload
+                    Pos.Chain.Update.Poll
+                    Pos.Chain.Update.Poll.Class
+                    Pos.Chain.Update.Poll.Failure
+                    Pos.Chain.Update.Poll.Modifier
+                    Pos.Chain.Update.Proof
+                    Pos.Chain.Update.SoftforkRule
+                    Pos.Chain.Update.SoftwareVersion
+                    Pos.Chain.Update.SystemTag
+                    Pos.Chain.Update.Vote
+                    Pos.Client.CLI.Secrets
+                    Pos.Client.CLI.Util
+                    Pos.Client.KeyStorage
+                    Pos.Client.Txp.Addresses
+                    Pos.Client.Txp.Balances
+                    Pos.Client.Txp.Network
+                    Pos.Client.Txp.Util
+                    Pos.Communication.Limits
+                    Pos.Configuration
+                    Pos.Context.Context
+                    Pos.Core.Common
+                    Pos.Core.Common.Coeff
+                    Pos.Core.Common.CoinPortion
+                    Pos.Core.Common.Script
+                    Pos.Core.Common.SharedSeed
+                    Pos.Core.Common.SlotLeaders
+                    Pos.Core.Common.StakeholderId
+                    Pos.Core.Common.Stakes
+                    Pos.Core.Common.TxFeePolicy
+                    Pos.Core.Common.TxSizeLinear
+                    Pos.Core.Conc
+                    Pos.Core.Constants
+                    Pos.Core.Context
+                    Pos.Core.Context.PrimaryKey
+                    Pos.Core.Exception
+                    Pos.Core.JsonLog
+                    Pos.Core.JsonLog.CanJsonLog
+                    Pos.Core.JsonLog.Event
+                    Pos.Core.JsonLog.JsonLogT
+                    Pos.Core.Limits
+                    Pos.Core.Merkle
+                    Pos.Core.Metrics.Constants
+                    Pos.Core.NetworkAddress
+                    Pos.Core.ProtocolConstants
+                    Pos.Core.Reporting
+                    Pos.Core.Reporting.MemState
+                    Pos.Core.Reporting.Methods
+                    Pos.Core.Reporting.Metrics
+                    Pos.Core.Script
+                    Pos.Core.Slotting.EpochIndex
+                    Pos.Core.Slotting.EpochOrSlot
+                    Pos.Core.Slotting.LocalSlotIndex
+                    Pos.Core.Slotting.MemState
+                    Pos.Core.Slotting.SlotCount
+                    Pos.Core.Slotting.SlotId
+                    Pos.Core.Slotting.TimeDiff
+                    Pos.Core.Slotting.Types
+                    Pos.Core.Slotting.Util
+                    Pos.Core.Util.TimeLimit
+                    Pos.Crypto.Configuration
+                    Pos.Crypto.Encryption
+                    Pos.Crypto.Limits
+                    Pos.Crypto.Orphans
+                    Pos.Crypto.Random
+                    Pos.Crypto.SecretSharing
+                    Pos.Crypto.Signing
+                    Pos.Crypto.Signing.Check
+                    Pos.Crypto.Signing.Redeem
+                    Pos.Crypto.Signing.Signing
+                    Pos.Crypto.Signing.Tag
+                    Pos.Crypto.Signing.Types
+                    Pos.Crypto.Signing.Types.Redeem
+                    Pos.Crypto.Signing.Types.Signing
+                    Pos.Crypto.Signing.Types.Tag
+                    Pos.DB
+                    Pos.DB.BatchOp
+                    Pos.DB.Block.BListener
+                    Pos.DB.Block.Epoch
+                    Pos.DB.Block.GState.BlockExtra
+                    Pos.DB.Block.GState.SanityCheck
+                    Pos.DB.Block.Internal
+                    Pos.DB.Block.Load
+                    Pos.DB.Block.Logic.Creation
+                    Pos.DB.Block.Logic.Header
+                    Pos.DB.Block.Logic.Internal
+                    Pos.DB.Block.Logic.Util
+                    Pos.DB.Block.Logic.VAR
+                    Pos.DB.Block.Lrc
+                    Pos.DB.Block.Slog.Context
+                    Pos.DB.Block.Slog.Logic
+                    Pos.DB.BlockIndex
+                    Pos.DB.Delegation
+                    Pos.DB.Delegation.Cede.Holders
+                    Pos.DB.Delegation.Cede.Logic
+                    Pos.DB.Delegation.Core
+                    Pos.DB.Delegation.Logic.Common
+                    Pos.DB.Delegation.Logic.Mempool
+                    Pos.DB.Delegation.Logic.VAR
+                    Pos.DB.Delegation.Var
+                    Pos.DB.Epoch.Index
+                    Pos.DB.Error
+                    Pos.DB.Functions
+                    Pos.DB.GState.Common
+                    Pos.DB.GState.Lock
+                    Pos.DB.GState.Stakes
+                    Pos.DB.Lrc
+                    Pos.DB.Lrc.Common
+                    Pos.DB.Lrc.Consumer
+                    Pos.DB.Lrc.Consumer.Delegation
+                    Pos.DB.Lrc.Consumer.Ssc
+                    Pos.DB.Lrc.Consumer.Update
+                    Pos.DB.Lrc.Consumers
+                    Pos.DB.Lrc.Context
+                    Pos.DB.Lrc.Issuers
+                    Pos.DB.Lrc.Leaders
+                    Pos.DB.Lrc.Lrc
+                    Pos.DB.Lrc.Mode
+                    Pos.DB.Lrc.Richmen
+                    Pos.DB.Lrc.RichmenBase
+                    Pos.DB.Lrc.Seed
+                    Pos.DB.Misc.Common
+                    Pos.DB.Pure
+                    Pos.DB.Rocks.Functions
+                    Pos.DB.Rocks.Types
+                    Pos.DB.Ssc.GState
+                    Pos.DB.Ssc.Logic.Global
+                    Pos.DB.Ssc.Logic.Local
+                    Pos.DB.Ssc.Logic.VAR
+                    Pos.DB.Ssc.SecretStorage
+                    Pos.DB.Ssc.State
+                    Pos.DB.Ssc.State.Global
+                    Pos.DB.Ssc.State.Local
+                    Pos.DB.Sum
+                    Pos.DB.Txp.Logic.Common
+                    Pos.DB.Txp.Logic.Global
+                    Pos.DB.Txp.Logic.Local
+                    Pos.DB.Txp.MemState.Class
+                    Pos.DB.Txp.MemState.Holder
+                    Pos.DB.Txp.MemState.Types
+                    Pos.DB.Txp.Settings
+                    Pos.DB.Txp.Stakes
+                    Pos.DB.Txp.Utxo
+                    Pos.DB.Update.Context
+                    Pos.DB.Update.GState
+                    Pos.DB.Update.GState.Misc
+                    Pos.DB.Update.Logic
+                    Pos.DB.Update.Logic.Global
+                    Pos.DB.Update.Logic.Local
+                    Pos.DB.Update.MemState
+                    Pos.DB.Update.MemState.Functions
+                    Pos.DB.Update.MemState.Types
+                    Pos.DB.Update.Poll.DBPoll
+                    Pos.DB.Update.Poll.Logic
+                    Pos.DB.Update.Poll.Logic.Apply
+                    Pos.DB.Update.Poll.Logic.Base
+                    Pos.DB.Update.Poll.Logic.Normalize
+                    Pos.DB.Update.Poll.Logic.Rollback
+                    Pos.DB.Update.Poll.Logic.Softfork
+                    Pos.DB.Update.Poll.Logic.Version
+                    Pos.DB.Update.Poll.PollState
+                    Pos.DB.Update.Poll.Pure
+                    Pos.Diffusion.Full
+                    Pos.Diffusion.Full.Block
+                    Pos.Diffusion.Full.Delegation
+                    Pos.Diffusion.Full.Ssc
+                    Pos.Diffusion.Full.Txp
+                    Pos.Diffusion.Full.Update
+                    Pos.GState.GState
+                    Pos.Infra.Binary.DHTModel
+                    Pos.Infra.Communication.BiP
+                    Pos.Infra.Communication.Constants
+                    Pos.Infra.Communication.Limits.Instances
+                    Pos.Infra.Communication.Listener
+                    Pos.Infra.Communication.Protocol
+                    Pos.Infra.Communication.Relay
+                    Pos.Infra.Communication.Relay.Class
+                    Pos.Infra.Communication.Relay.Logic
+                    Pos.Infra.Communication.Relay.Types
+                    Pos.Infra.Communication.Relay.Util
+                    Pos.Infra.Communication.Specs
+                    Pos.Infra.Communication.Types.Protocol
+                    Pos.Infra.Communication.Types.Relay
+                    Pos.Infra.DHT.Constants
+                    Pos.Infra.DHT.Model.Types
+                    Pos.Infra.DHT.Real
+                    Pos.Infra.DHT.Real.CLI
+                    Pos.Infra.DHT.Real.Real
+                    Pos.Infra.DHT.Real.Types
+                    Pos.Infra.Diffusion.Subscription.Common
+                    Pos.Infra.Diffusion.Subscription.Dht
+                    Pos.Infra.Diffusion.Subscription.Dns
+                    Pos.Infra.Diffusion.Subscription.Status
+                    Pos.Infra.Diffusion.Subscription.Subscriber
+                    Pos.Infra.Diffusion.Transport.TCP
+                    Pos.Infra.Diffusion.Types
+                    Pos.Infra.HealthCheck.Route53
+                    Pos.Infra.Network.DnsDomains
+                    Pos.Infra.Network.Policy
+                    Pos.Infra.Recovery.Info
+                    Pos.Infra.Recovery.Types
+                    Pos.Infra.Reporting
+                    Pos.Infra.Reporting.Ekg
+                    Pos.Infra.Reporting.Exceptions
+                    Pos.Infra.Reporting.Health.Types
+                    Pos.Infra.Reporting.Methods
+                    Pos.Infra.Reporting.NodeInfo
+                    Pos.Infra.Reporting.Statsd
+                    Pos.Infra.Shutdown
+                    Pos.Infra.Shutdown.Class
+                    Pos.Infra.Shutdown.Logic
+                    Pos.Infra.Shutdown.Types
+                    Pos.Infra.Slotting
+                    Pos.Infra.Slotting.Class
+                    Pos.Infra.Slotting.Error
+                    Pos.Infra.Slotting.Impl
+                    Pos.Infra.Slotting.Impl.Simple
+                    Pos.Infra.Slotting.Impl.Util
+                    Pos.Infra.Slotting.Types
+                    Pos.Infra.Slotting.Util
+                    Pos.Infra.StateLock
+                    Pos.Infra.Statistics
+                    Pos.Infra.Statistics.Ekg
+                    Pos.Infra.Statistics.Statsd
+                    Pos.Infra.Util.JsonLog.Events
+                    Pos.Infra.Util.LogSafe
+                    Pos.Infra.Util.Monitor
+                    Pos.Infra.Util.SigHandler
+                    Pos.Infra.Util.TimeLimit
+                    Pos.Launcher.Runner
+                    Pos.Launcher.Scenario
+                    Pos.Listener.Delegation
+                    Pos.Listener.Txp
+                    Pos.Listener.Update
+                    Pos.Logic.Full
+                    Pos.Logic.Types
+                    Pos.Network.Block.Logic
+                    Pos.Network.Block.Retrieval
+                    Pos.Network.Block.RetrievalQueue
+                    Pos.Network.Block.Types
+                    Pos.Network.Block.WorkMode
+                    Pos.Reporting.Production
+                    Pos.Util.Concurrent
+                    Pos.Util.Concurrent.PriorityLock
+                    Pos.Util.Concurrent.RWLock
+                    Pos.Util.Config
+                    Pos.Util.Filesystem
+                    Pos.Util.Future
+                    Pos.Util.Json.Parse
+                    Pos.Util.Lens
+                    Pos.Util.Orphans
+                    Pos.Util.OutboundQueue
+                    Pos.Util.Queue
+                    Pos.Util.Servant
+                    Pos.Util.Timer
+                    Pos.Util.Trace
+                    Pos.Util.UserKeyError
+                    Pos.Util.UserSecret
+                    Test.Pos.Chain.Update.Arbitrary
+                    Test.Pos.Configuration
+                    Test.Pos.Core.Arbitrary
+                    Test.Pos.Crypto.Arbitrary
+                    Test.Pos.Crypto.Arbitrary.Unsafe
+                    Test.Pos.Crypto.Dummy
+                    Test.Pos.Util.QuickCheck.Arbitrary
+  default-language:    Haskell2010
+  default-extensions: TypeOperators
+                      BangPatterns
+                      ConstraintKinds
+                      DataKinds
+                      DefaultSignatures
+                      DeriveDataTypeable
+                      DeriveGeneric
+                      DeriveFunctor
+                      DeriveFoldable
+                      DeriveTraversable
+                      FlexibleContexts
+                      FlexibleInstances
+                      GeneralizedNewtypeDeriving
+                      LambdaCase
+                      MonadFailDesugaring
+                      MonadFailDesugaring
+                      MultiParamTypeClasses
+                      MultiWayIf
+                      NoImplicitPrelude
+                      OverloadedStrings
+                      RecordWildCards
+                      ScopedTypeVariables
+                      StandaloneDeriving
+                      TemplateHaskell
+                      TupleSections
+                      TypeApplications
+                      TypeFamilies
+                      RankNTypes
+                      TypeOperators
+                      UndecidableInstances
+                      ViewPatterns
+  build-depends:       base
+                     , Cabal
+                     , QuickCheck
+                     , acid-state
+                     , aeson
+                     , aeson-options
+                     , asn1-encoding
+                     , parsers
+                     , trifecta
+                     , aeson-pretty
+                     , ansi-wl-pprint
+                     , array
+                     , async
+                     , auto-update
+                     , base58-bytestring
+                     , base64-bytestring
+                     , basement
+                     , beam-core
+                     , beam-migrate
+                     , beam-sqlite
+                     , bifunctors
+                     , binary
+                     , bytestring
+                     , canonical-json
+                     , cardano-crypto
+                     , cardano-report-server
+                     , cborg
+                     , cereal
+                     , clock
+                     , concurrent-extra
+                     , conduit
+                     , constraints
+                     , containers
+                     , contravariant
+                     , cryptonite
+                     , cryptonite-openssl
+                     , data-default
+                     , deepseq
+                     , deriving-compat
+                     , digest
+                     , directory
+                     , dlist
+                     , dns
+                     , ekg-core
+                     , ekg-statsd
+                     , ekg-wai
+                     , ether
+                     , exceptions
+                     , extra
+                     , file-embed
+                     , filelock
+                     , filepath
+                     , fmt
+                     , foldl
+                     , formatting
+                     , free
+                     , generic-arbitrary
+                     , generics-sop
+                     , hashable
+                     , http-api-data
+                     , http-client
+                     , http-client-tls
+                     , http-conduit
+                     , http-types
+                     , iproute
+                     , ixset-typed
+                     , kademlia
+                     , katip
+                     , lens
+                     , lifted-async
+                     , lrucache
+                     , lzma-conduit
+                     , megaparsec
+                     , memory
+                     , mmorph
+                     , monad-control
+                     , mono-traversable
+                     , mtl
+                     , mwc-random
+                     , neat-interpolation
+                     , network
+                     , network-info
+                     , network-transport
+                     , network-transport-tcp
+                     , optparse-applicative
+                     , parsec
+                     , plutus-prototype
+                     , process
+                     , pvss
+                     , quickcheck-instances
+                     , random
+                     , recursion-schemes
+                     , reflection
+                     , resourcet
+                     , retry
+                     , rocksdb-haskell-ng
+                     , safe-exceptions
+                     , safecopy
+                     , scientific
+                     , scrypt
+                     , semver
+                     , serokell-util
+                     , servant
+                     , servant-client
+                     , servant-client-core
+                     , servant-generic
+                     , servant-multipart
+                     , servant-server
+                     , servant-swagger
+                     , servant-swagger-ui
+                     , servant-swagger-ui-core
+                     , servant-swagger-ui-redoc
+                     , sqlite-simple
+                     , sqlite-simple-errors
+                     , stm
+                     , streaming-commons
+                     , swagger2
+                     , systemd
+                     , tagged
+                     , tar
+                     , template-haskell
+                     , text
+                     , th-utilities
+                     , these
+                     , time
+                     , time-units
+                     , tls
+                     , transformers
+                     , transformers-base
+                     , transformers-lift
+                     , universum
+                     , unix
+                     , unliftio
+                     , unliftio-core
+                     , unordered-containers
+                     , vector
+                     , wai
+                     , wai-middleware-throttle
+                     , wai-websockets
+                     , warp
+                     , warp-tls
+                     , websockets
+                     , x509
+                     , x509-store
+                     , x509-validation
+                     , yaml
+
+executable cardano-node
+  hs-source-dirs:     wallet-new/server
+  main-is:            Main.hs
+  ghc-options:        -threaded -rtsopts -Wall -O2
+  build-depends:      everything
+                    , universum
+                    , base
+  default-language:    Haskell2010
+  default-extensions: OverloadedStrings
+
+executable cardano-launcher
+  hs-source-dirs:     tools/src/launcher
+  main-is:            Main.hs
+  build-depends:      everything
+                    , cardano-report-server
+                    , base
+                    , universum
+                    , lens
+                    , aeson
+                    , bytestring
+                    , yaml
+                    , neat-interpolation
+                    , unix
+                    , process
+                    , silently
+                    , text
+                    , directory
+                    , formatting
+                    , optparse-applicative
+                    , filepath
+                    , ansi-wl-pprint
+                    , unordered-containers
+                    , safe-exceptions
+                    , lifted-async
+                    , aeson-options
+                    , time-units
+  default-language:    Haskell2010
+  default-extensions:  OverloadedStrings
+                       TupleSections
+                       TypeApplications
+
+executable cardano-x509-certificates
+  hs-source-dirs: tools/src/gencerts
+  main-is: Main.hs
+  default-language:    Haskell2010
+  build-depends:       base
+                     , everything
+                     , filepath
+                     , optparse-applicative
+                     , universum

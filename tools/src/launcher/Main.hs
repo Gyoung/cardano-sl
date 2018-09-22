@@ -31,7 +31,7 @@ import           Data.List (isSuffixOf)
 import           Data.Maybe (isNothing)
 import qualified Data.Text.IO as T
 import           Data.Time.Units (Second, convertUnit)
-import           Data.Version (showVersion)
+import           Data.Version (showVersion, Version(Version))
 import qualified Data.Yaml as Y
 import           Formatting (build, int, sformat, shown, stext, string, (%))
 import qualified NeatInterpolation as Q (text)
@@ -62,7 +62,6 @@ import qualified System.Process.Internals as Process
 import           Foreign.C.Error (Errno (..), ePIPE)
 import           GHC.IO.Exception (IOErrorType (..), IOException (..))
 
-import           Paths_cardano_sl (version)
 import           Pos.Chain.Genesis (Config (..))
 import           Pos.Client.CLI (readLoggerConfig)
 import           Pos.Core (Timestamp (..))
@@ -236,7 +235,7 @@ getLauncherOptions = do
                  <> footerDoc usageExample
 
     versionOption = infoOption
-        ("cardano-launcher-" <> showVersion version)
+        ("cardano-launcher-" <> showVersion (Version [ 1, 3, 0 ] []))
         (long "version" <> help "Show version.")
 
     defaultConfigPath :: IO FilePath

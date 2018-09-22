@@ -13,6 +13,7 @@ module Serokell.AcidState.Util
        , tidyLocalState
        ) where
 
+import Prelude
 import           Control.Exception (Exception, throw)
 import           Control.Monad.Except (ExceptT, runExceptT)
 import           Control.Monad.Reader (Reader, asks, runReader)

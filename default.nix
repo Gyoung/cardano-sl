@@ -37,6 +37,11 @@ let
     testTarget = "--show-details=streaming";
   });
 
+  justHsAndCabal = name: type:
+    let
+      baseName = baseNameOf (toString name);
+    in (type == "directory" || hasSuffix ".hs" name || hasSuffix ".cabal" name || baseName == "configuration.yaml");
+
   requiredOverlay = self: super: {
     srcroot = ./.;
     cardano-sl-core = overrideCabal super.cardano-sl-core (drv: {
@@ -53,6 +58,8 @@ let
         inherit enableProfiling;
       };
     });
+    everything = self.callCabal2nix "everything" (cleanSourceWith { filter=justHsAndCabal; src= ./.; }) {};
+    everything-static = justStaticExecutablesGitRev self.everything;
     cardano-sl-wallet-static = justStaticExecutablesGitRev self.cardano-sl-wallet;
     cardano-sl-client = addRealTimeTestLogs super.cardano-sl-client;
     cardano-sl-generator = addRealTimeTestLogs super.cardano-sl-generator;

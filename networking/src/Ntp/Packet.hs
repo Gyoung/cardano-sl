@@ -13,7 +13,7 @@ module Ntp.Packet
     , ntpToRealMcs
     ) where
 
-
+import           Prelude
 import           Control.Monad (replicateM_)
 import           Data.Binary (Binary (..))
 import           Data.Binary.Get (getInt8, getWord32be, getWord8, skip)

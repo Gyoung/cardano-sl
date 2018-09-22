@@ -7,13 +7,13 @@ import           Cardano.Wallet.API.V1.Migration
 import qualified Cardano.Wallet.API.V1.Settings as Settings
 import           Cardano.Wallet.API.V1.Types as V1
 import qualified Data.Text as T
-import           Paths_cardano_sl_wallet_new (version)
 
 import           Pos.Chain.Update (curSoftwareVersion)
 import           Pos.Util.CompileInfo (compileInfo, ctiGitRevision)
 import           Pos.Wallet.WalletMode (MonadBlockchainInfo,
                      blockchainSlotDuration)
 import           Servant
+import Data.Version (Version(Version))
 
 -- | All the @Servant@ handlers for settings-specific operations.
 handlers :: ( HasConfigurations
@@ -29,6 +29,6 @@ getSettings :: (HasConfigurations, HasCompileInfo, MonadBlockchainInfo m)
 getSettings = do
     settings <- NodeSettings <$> (V1.mkSlotDuration . fromIntegral <$> blockchainSlotDuration)
                              <*> pure (V1 curSoftwareVersion)
-                             <*> pure version
+                             <*> pure (Version [ 1, 3, 0 ] [])
                              <*> pure (T.replace "\n" mempty $ ctiGitRevision compileInfo)
     return $ single settings

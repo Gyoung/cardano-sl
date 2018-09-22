@@ -72,6 +72,7 @@ module Network.Broadcast.OutboundQueue.ConcurrentMultiQueue
     , tests
     ) where
 
+import           Prelude
 import           Control.Concurrent
 import           Control.Exception (Exception, throwIO)
 import           Control.Lens

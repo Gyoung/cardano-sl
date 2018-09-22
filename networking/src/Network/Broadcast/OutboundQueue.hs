@@ -83,6 +83,7 @@ module Network.Broadcast.OutboundQueue (
   , currentlyInFlight
   ) where
 
+import           Prelude
 import           Control.Concurrent
 import           Control.Concurrent.Async
 import           Control.Concurrent.STM

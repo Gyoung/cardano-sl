@@ -14,6 +14,7 @@ module Serokell.AcidState.ExtendedState
        , updateExtended
        ) where
 
+import Prelude
 import           Control.Monad.Extra (whenM)
 import           Control.Monad.Trans (MonadIO (liftIO))
 import           Data.Acid (AcidState, EventResult, EventState, IsAcidic,

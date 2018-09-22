@@ -9,6 +9,7 @@ module Data.NonEmptySet (
 
     ) where
 
+import Prelude
 import           Data.Foldable (foldrM)
 import           Data.List.NonEmpty (NonEmpty ((:|)))
 import           Data.Set (Set)

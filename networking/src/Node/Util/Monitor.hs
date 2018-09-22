@@ -4,6 +4,7 @@ module Node.Util.Monitor (
       registerMetrics
     ) where
 
+import Prelude
 import           Data.Monoid ((<>))
 import qualified Data.Text as T
 import           Node

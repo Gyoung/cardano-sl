@@ -52,6 +52,7 @@ module Node (
 
     ) where
 
+import Prelude
 import           Control.Concurrent.STM
 import           Control.Exception (Exception (..), SomeException, catch, mask,
                      throwIO)

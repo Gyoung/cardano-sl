@@ -45,6 +45,7 @@ module Node.Internal (
     Timeout(..)
   ) where
 
+import Prelude
 import           Control.Concurrent (threadDelay)
 import           Control.Concurrent.Async
 import           Control.Concurrent.MVar
