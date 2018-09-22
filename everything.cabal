@@ -784,12 +784,11 @@ library
                      , acid-state
                      , aeson
                      , aeson-options
-                     , asn1-encoding
-                     , parsers
-                     , trifecta
                      , aeson-pretty
                      , ansi-wl-pprint
                      , array
+                     , asn1-encoding
+                     , asn1-types
                      , async
                      , auto-update
                      , base58-bytestring
@@ -815,6 +814,7 @@ library
                      , cryptonite
                      , cryptonite-openssl
                      , data-default
+                     , data-default-class
                      , deepseq
                      , deriving-compat
                      , digest
@@ -864,6 +864,7 @@ library
                      , network-transport-tcp
                      , optparse-applicative
                      , parsec
+                     , parsers
                      , plutus-prototype
                      , process
                      , pvss
@@ -908,6 +909,7 @@ library
                      , transformers
                      , transformers-base
                      , transformers-lift
+                     , trifecta
                      , universum
                      , unix
                      , unliftio
