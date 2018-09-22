@@ -58,7 +58,9 @@ let
         inherit enableProfiling;
       };
     });
-    everything = self.callCabal2nix "everything" (cleanSourceWith { filter=justHsAndCabal; src= ./.; }) {};
+    everything = overrideCabal (self.callPackage ./everything.nix {}) (_: {
+      src = cleanSourceWith { filter=justHsAndCabal; src= ./.; };
+    });
     everything-static = justStaticExecutablesGitRev self.everything;
     cardano-sl-wallet-static = justStaticExecutablesGitRev self.cardano-sl-wallet;
     cardano-sl-client = addRealTimeTestLogs super.cardano-sl-client;
