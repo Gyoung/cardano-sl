@@ -29,6 +29,7 @@ library
   exposed-modules:    Cardano.Wallet.Action
                     , Cardano.Wallet.LegacyAction
                     , Cardano.Wallet.Server.CLI
+                    , Cardano.X509.Configuration
                     , Pos.Chain.Genesis
                     , Pos.Client.CLI
                     , Pos.Core
@@ -837,11 +838,13 @@ library
                      , generic-arbitrary
                      , generics-sop
                      , hashable
+                     , hourglass
                      , http-api-data
                      , http-client
                      , http-client-tls
                      , http-conduit
                      , http-types
+                     , ip
                      , iproute
                      , ixset-typed
                      , kademlia
@@ -977,3 +980,4 @@ executable cardano-x509-certificates
                      , filepath
                      , optparse-applicative
                      , universum
+  default-extensions: OverloadedStrings
