@@ -14,7 +14,7 @@ import qualified Cardano.Wallet.API.V1.Types as V1
 import qualified Cardano.Wallet.Kernel.Internal as Kernel
 import           Cardano.Wallet.Kernel.NodeStateAdaptor (NodeStateAdaptor)
 import qualified Cardano.Wallet.Kernel.NodeStateAdaptor as Node
-import Data.Version (Version(Version))
+import           Data.Version (Version (Version))
 
 
 getNodeSettings :: MonadIO m => Kernel.PassiveWallet -> m V1.NodeSettings

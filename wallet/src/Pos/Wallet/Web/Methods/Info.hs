@@ -6,11 +6,11 @@ module Pos.Wallet.Web.Methods.Info
 
 import           Universum
 
+import           Data.Version (Version (Version))
 import           Pos.Chain.Update (HasUpdateConfiguration, curSoftwareVersion)
 import           Pos.Util.CompileInfo (HasCompileInfo, compileInfo,
                      ctiGitRevision)
 import           Pos.Wallet.Web.ClientTypes (ApiVersion (..), ClientInfo (..))
-import Data.Version (Version(Version))
 
 getClientInfo :: (HasCompileInfo, HasUpdateConfiguration, Applicative m) => m ClientInfo
 getClientInfo =

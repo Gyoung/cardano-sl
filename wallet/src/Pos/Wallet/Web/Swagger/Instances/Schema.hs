@@ -10,7 +10,6 @@ module Pos.Wallet.Web.Swagger.Instances.Schema where
 import           Universum
 
 import           Control.Lens (ix, mapped, (?~))
-import qualified Data.Text as T
 import           Data.Aeson (toJSON)
 import           Data.Swagger (NamedSchema (..), SwaggerType (..),
                      ToParamSchema (..), ToSchema (..), declareNamedSchema,
@@ -19,6 +18,7 @@ import           Data.Swagger (NamedSchema (..), SwaggerType (..),
                      name, properties, required, sketchSchema, type_)
 import           Data.Swagger.Internal.Schema (named)
 import qualified Data.Swagger.Lens as Swagger
+import qualified Data.Text as T
 import           Data.Typeable (Typeable, typeRep)
 
 #if !(MIN_VERSION_swagger2(2,2,2))

@@ -45,7 +45,6 @@ module Node.Internal (
     Timeout(..)
   ) where
 
-import Prelude
 import           Control.Concurrent (threadDelay)
 import           Control.Concurrent.Async
 import           Control.Concurrent.MVar
@@ -64,6 +63,7 @@ import           Data.Hashable (Hashable)
 import           Data.Int (Int64)
 import           Data.Map.Strict (Map)
 import qualified Data.Map.Strict as Map
+import           Prelude
 #if !(MIN_VERSION_base(4,8,0))
 import           Data.Monoid
 #endif

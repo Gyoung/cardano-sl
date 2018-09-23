@@ -26,7 +26,7 @@ import           Control.Concurrent.MVar (modifyMVar_, newMVar, withMVar)
 
 import qualified Data.Text as T
 import           Data.Time (UTCTime, getCurrentTime)
-import           Data.Version (showVersion, Version(Version))
+import           Data.Version (Version (Version), showVersion)
 import           System.FilePath (splitFileName, (</>))
 import           Universum hiding (newMVar)
 

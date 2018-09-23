@@ -31,7 +31,7 @@ import           Data.List (isSuffixOf)
 import           Data.Maybe (isNothing)
 import qualified Data.Text.IO as T
 import           Data.Time.Units (Second, convertUnit)
-import           Data.Version (showVersion, Version(Version))
+import           Data.Version (Version (Version), showVersion)
 import qualified Data.Yaml as Y
 import           Formatting (build, int, sformat, shown, stext, string, (%))
 import qualified NeatInterpolation as Q (text)

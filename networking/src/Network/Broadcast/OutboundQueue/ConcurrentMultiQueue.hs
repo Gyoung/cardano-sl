@@ -72,7 +72,6 @@ module Network.Broadcast.OutboundQueue.ConcurrentMultiQueue
     , tests
     ) where
 
-import           Prelude
 import           Control.Concurrent
 import           Control.Exception (Exception, throwIO)
 import           Control.Lens
@@ -82,6 +81,7 @@ import           Data.Map.Strict (Map)
 import qualified Data.Map.Strict as Map
 import           Data.Maybe (fromMaybe, isJust)
 import           GHC.Stack
+import           Prelude
 
 {-------------------------------------------------------------------------------
   Concurrent multi-queue

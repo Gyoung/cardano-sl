@@ -52,7 +52,6 @@ module Node (
 
     ) where
 
-import Prelude
 import           Control.Concurrent.STM
 import           Control.Exception (Exception (..), SomeException, catch, mask,
                      throwIO)
@@ -74,6 +73,7 @@ import           Node.Message.Class (Message (..), MessageCode, Packing,
 import           Node.Message.Decoder (ByteOffset, Decoder (..),
                      DecoderStep (..), continueDecoding)
 import           Pos.Util.Trace (Severity (..), Trace, traceWith)
+import           Prelude
 import           System.Random (StdGen)
 
 

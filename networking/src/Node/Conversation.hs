@@ -8,11 +8,11 @@ module Node.Conversation
     , converseWith
     ) where
 
-import Prelude
 import           Data.ByteString.Lazy (ByteString)
 import           Data.Word (Word32)
 import qualified Node.Internal as LL
 import           Node.Message.Class
+import           Prelude
 
 newtype Converse packingType peerData = Converse {
       runConverse :: forall t . LL.NodeId -> (peerData -> Conversation packingType t) -> IO t

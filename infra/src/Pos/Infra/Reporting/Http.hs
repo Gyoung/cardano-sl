@@ -23,13 +23,13 @@ import           Pos.ReportServer.Report (ReportInfo (..), ReportType (..))
 import           System.FilePath (takeFileName)
 import           System.Info (arch, os)
 
+import           Data.Version (Version (Version))
 import           Pos.Core.Reporting ()
 import           Pos.Crypto (ProtocolMagic (..))
 import           Pos.Infra.Reporting.Exceptions (ReportingError (..))
 import           Pos.Util.CompileInfo (CompileTimeInfo)
 import           Pos.Util.Trace (Severity (..), Trace, traceWith)
 import           Pos.Util.Util ((<//>))
-import Data.Version (Version(Version))
 
 
 -- | Given optional log file and report type, sends reports to URI

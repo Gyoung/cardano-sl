@@ -8,12 +8,12 @@ import qualified Cardano.Wallet.API.V1.Settings as Settings
 import           Cardano.Wallet.API.V1.Types as V1
 import qualified Data.Text as T
 
+import           Data.Version (Version (Version))
 import           Pos.Chain.Update (curSoftwareVersion)
 import           Pos.Util.CompileInfo (compileInfo, ctiGitRevision)
 import           Pos.Wallet.WalletMode (MonadBlockchainInfo,
                      blockchainSlotDuration)
 import           Servant
-import Data.Version (Version(Version))
 
 -- | All the @Servant@ handlers for settings-specific operations.
 handlers :: ( HasConfigurations

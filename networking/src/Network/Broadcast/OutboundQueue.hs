@@ -83,7 +83,6 @@ module Network.Broadcast.OutboundQueue (
   , currentlyInFlight
   ) where
 
-import           Prelude
 import           Control.Concurrent
 import           Control.Concurrent.Async
 import           Control.Concurrent.STM
@@ -110,6 +109,7 @@ import           Data.Time
 import           Data.Typeable (typeOf)
 import           Formatting (Format, sformat, shown, string, (%))
 import           GHC.Generics hiding (prec)
+import           Prelude
 import qualified System.Metrics as Monitoring
 import           System.Metrics.Counter (Counter)
 import qualified System.Metrics.Counter as Counter

@@ -10,7 +10,7 @@ import           Universum
 
 import           Control.Lens ((?~))
 import           Data.Swagger (Swagger, description, info, title, version)
-import           Data.Version (showVersion, Version(Version))
+import           Data.Version (Version (Version), showVersion)
 import           Formatting.Buildable (build)
 import           Servant.Swagger (toSwagger)
 

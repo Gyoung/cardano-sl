@@ -17,7 +17,7 @@ module Pos.Client.CLI.NodeOptions
 
 import           Universum
 
-import           Data.Version (showVersion)
+import           Data.Version (Version (Version), showVersion)
 import           NeatInterpolation (text)
 import           Options.Applicative (Parser, auto, execParser, footerDoc,
                      fullDesc, header, help, helper, info, infoOption, long,
@@ -33,7 +33,6 @@ import           Pos.Infra.Statistics (EkgParams, StatsdParams, ekgParamsOption,
                      statsdParamsOption)
 import           Pos.Util.CompileInfo (CompileTimeInfo (..), HasCompileInfo,
                      compileInfo)
-import Data.Version (Version(Version))
 
 data CommonNodeArgs = CommonNodeArgs
     { dbPath                 :: !(Maybe FilePath)
