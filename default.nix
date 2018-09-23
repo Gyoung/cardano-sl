@@ -58,6 +58,7 @@ let
         inherit enableProfiling;
       };
     });
+    everythingCabal = pkgs.callPackage ./cabal-merger/mergeFiles.nix { inherit (self) cabal-merger srcroot; };
     everything = overrideCabal (self.callPackage ./everything.nix {}) (_: {
       src = cleanSourceWith { filter=justHsAndCabal; src= ./.; };
     });

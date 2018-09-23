@@ -52,6 +52,15 @@ let
       exit
     '';
   };
+  updateEverythingCabal = stdenv.mkDerivation {
+    name = "updateEverythingCabal";
+    buildInputs = [ pkgs.cabal2nix ];
+    shellHook = ''
+      cp ${iohkPkgs.everythingCabal} everything.cabal
+      cabal2nix ./. > everything.nix
+      exit
+    '';
+  };
 in cardanoSL // {
-  inherit fixStylishHaskell;
+  inherit fixStylishHaskell updateEverythingCabal;
 }

@@ -317,19 +317,23 @@ license = stdenv.lib.licenses.bsd3;
 , deepseq
 , directory
 , filepath
+, mtl
+, parsec
 , pretty
 , process
 , stdenv
+, text
 , time
+, transformers
 , unix
 }:
 mkDerivation {
 
 pname = "Cabal";
-version = "2.0.1.1";
-sha256 = "802bc6d0113fdb734ea938ad2aadc14f590e372b55d56be6712de319bb343d1b";
+version = "2.2.0.0";
+sha256 = "26a9b178fd83751f3fa6977922c447b63ac837a5371878ad7e1253beddfb042f";
 revision = "1";
-editedCabalFile = "17ydppw8x5cx5whrs44yxirh7xgcaa6gzvxmlgqnbalcf8wkj23l";
+editedCabalFile = "1fa2lvwj1b0yj06k8pb3smdhdyl94dxy9ac9jqmmj9cdv8msrb8x";
 libraryHaskellDepends = [
 array
 base
@@ -339,9 +343,13 @@ containers
 deepseq
 directory
 filepath
+mtl
+parsec
 pretty
 process
+text
 time
+transformers
 unix
 ];
 doHaddock = false;
@@ -14143,6 +14151,30 @@ postInstall = ''
 homepage = "http://www.haskell.org/cabal/";
 description = "The command-line interface for Cabal and Hackage";
 license = stdenv.lib.licenses.bsd3;
+
+}) {};
+"cabal-merger" = callPackage
+({
+  mkDerivation
+, base
+, Cabal
+, containers
+, stdenv
+}:
+mkDerivation {
+
+pname = "cabal-merger";
+version = "0.0.1";
+src = ./../cabal-merger;
+isLibrary = false;
+isExecutable = true;
+executableHaskellDepends = [
+base
+Cabal
+containers
+];
+doHaddock = false;
+license = stdenv.lib.licenses.mit;
 
 }) {};
 "cabal-rpm" = callPackage
