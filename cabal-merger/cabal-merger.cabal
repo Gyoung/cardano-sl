@@ -9,6 +9,8 @@ executable cabal-merger
   build-depends:       base
                      , Cabal >=2.2
                      , containers
+                     , system-filepath
+                     , text
   default-extensions:  OverloadedStrings
   main-is:             Main.hs
   default-language:    Haskell2010

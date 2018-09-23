@@ -1,9 +1,11 @@
 module Main where
 
+import           Data.Either
 import           Data.Foldable (foldlM)
 import           Data.List (isPrefixOf)
 import           Data.Monoid ((<>))
 import qualified Data.Set as S
+import qualified Data.Text as T
 import           Distribution.License (License (MIT))
 import           Distribution.ModuleName (ModuleName, toFilePath)
 import           Distribution.Package (Dependency (Dependency),
@@ -27,6 +29,8 @@ import           Distribution.Types.UnqualComponentName (UnqualComponentName)
 import           Distribution.Verbosity (silent)
 import           Distribution.Version (anyVersion, laterVersion, mkVersion,
                      thisVersion, unionVersionRanges)
+import           Filesystem.Path (directory)
+import           Filesystem.Path.CurrentOS
 import           Language.Haskell.Extension (Extension, Language (Haskell2010))
 import           System.Environment (getArgs)
 
@@ -51,11 +55,20 @@ main = do
     go state cabalFile = do
       pkg <- readGenericPackageDescription silent cabalFile
       print cabalFile
+      let
+        prefix = directory (fromText $ T.pack cabalFile)
       middle <- goLibrary state pkg
-      final <- foldlM goExecutable middle (condExecutables pkg)
+      final <- foldlM (goExecutable $ T.unpack $ fromRight undefined $ toText prefix) middle (condExecutables pkg)
       pure $ final {
           sExecutables = (sExecutables final) <> (executables $ packageDescription pkg)
         }
+
+    fixExecutableSrc :: String -> Executable -> Executable
+    fixExecutableSrc prefix exe = exe {
+        buildInfo = (buildInfo exe) {
+            hsSourceDirs = map (prefix <>) (hsSourceDirs $ buildInfo exe)
+        }
+      }
 
     goLibrary :: State -> GenericPackageDescription -> IO State
     goLibrary state pkg = do
@@ -75,11 +88,11 @@ main = do
           pure newState
         Nothing -> do
           pure state
-    goExecutable :: State -> (UnqualComponentName, CondTree ConfVar [ Dependency ] Executable) -> IO State
-    goExecutable state (name, CondNode exe _ _) = do
+    goExecutable :: String -> State -> (UnqualComponentName, CondTree ConfVar [ Dependency ] Executable) -> IO State
+    goExecutable prefix state (name, CondNode exe _ _) = do
       -- by omiting half of the CondNode, the conditions within each executable section are missing
       pure $ state {
-        sCondExecutables = (sCondExecutables state) <> [ (name, CondNode exe [] [] ) ]
+        sCondExecutables = (sCondExecutables state) <> [ (name, CondNode (fixExecutableSrc prefix exe) [] [] ) ]
       }
   result <- getArgs >>= foldlM go (State [] S.empty [] S.empty S.empty [] [])
   let
@@ -155,8 +168,4 @@ main = do
       , maintainer = "operations@iohk.io"
       , homepage = "https://github.com/input-output-hk/cardano-sl/#readme"
       }
-  print $ head $ condExecutables genPackage
   writeGenericPackageDescription "output" genPackage
-
-stripVersionRestrictions :: GenericPackageDescription -> GenericPackageDescription
-stripVersionRestrictions = id
