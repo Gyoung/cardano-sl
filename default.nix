@@ -62,6 +62,7 @@ let
       src = cleanSourceWith { filter=justHsAndCabal; src= ./.; };
     });
     everything-static = justStaticExecutablesGitRev self.everything;
+    cabal-merger = self.callCabal2nix "cabal-merger" ./cabal-merger {};
     cardano-sl-wallet-static = justStaticExecutablesGitRev self.cardano-sl-wallet;
     cardano-sl-client = addRealTimeTestLogs super.cardano-sl-client;
     cardano-sl-generator = addRealTimeTestLogs super.cardano-sl-generator;
