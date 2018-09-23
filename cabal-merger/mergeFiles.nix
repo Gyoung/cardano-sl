@@ -24,6 +24,7 @@ cabal-merger \
   ./lib/cardano-sl.cabal \
   ./networking/cardano-sl-networking.cabal \
   ./node-ipc/cardano-sl-node-ipc.cabal \
+  ./tools/cardano-sl-tools.cabal \
   ./util/cardano-sl-util.cabal \
   ./util/test/cardano-sl-util-test.cabal \
   ./utxo/utxo.cabal \

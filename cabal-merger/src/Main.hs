@@ -1,6 +1,6 @@
-module Main where
+module Main (main) where
 
-import           Data.Either
+import           Data.Either (fromRight)
 import           Data.Foldable (foldlM)
 import           Data.List (isPrefixOf)
 import           Data.Monoid ((<>))
@@ -27,10 +27,10 @@ import           Distribution.Types.GenericPackageDescription (GenericPackageDes
                      emptyGenericPackageDescription)
 import           Distribution.Types.UnqualComponentName (UnqualComponentName)
 import           Distribution.Verbosity (silent)
-import           Distribution.Version (anyVersion, laterVersion, mkVersion,
+import           Distribution.Version (anyVersion, mkVersion, orLaterVersion,
                      thisVersion, unionVersionRanges)
 import           Filesystem.Path (directory)
-import           Filesystem.Path.CurrentOS
+import           Filesystem.Path.CurrentOS (fromText, toText)
 import           Language.Haskell.Extension (Extension, Language (Haskell2010))
 import           System.Environment (getArgs)
 
@@ -48,78 +48,87 @@ data State =
 instance Ord Dependency where
   compare a b = compare (depPkgName a) (depPkgName b)
 
+fixExecutableSrc :: String -> Executable -> Executable
+fixExecutableSrc prefix exe = exe {
+    buildInfo = (buildInfo exe) {
+        hsSourceDirs = map (prefix <>) (hsSourceDirs $ buildInfo exe)
+    }
+  }
+
+goExecutable :: String -> State -> (UnqualComponentName, CondTree ConfVar [ Dependency ] Executable) -> IO State
+goExecutable prefix state (name, CondNode exe _ _) = do
+  -- by omiting half of the CondNode, the conditions within each executable section are missing
+  pure $ state {
+    sCondExecutables = (sCondExecutables state) <> [ (name, CondNode (fixExecutableSrc prefix exe) [] [] ) ]
+  }
+
+goLibrary :: State -> GenericPackageDescription -> IO State
+goLibrary state pkg = do
+  case (condLibrary pkg) of
+    Just node -> do
+      let
+        pkgname :: PackageName
+        pkgname = pkgName $ package $ packageDescription pkg
+        eModules = exposedModules $ condTreeData node
+        newState = state {
+            sExposedModules = (sExposedModules state) <> eModules
+          , sLibDepends = (sLibDepends state) <> (S.fromList $ targetBuildDepends $ libBuildInfo $ condTreeData node)
+          , sNamesToExclude = (sNamesToExclude state) <> [ pkgname ]
+          , sLibExtensions = (sLibExtensions state) <> (S.fromList $ defaultExtensions $ libBuildInfo $ condTreeData node)
+          , sLibOtherModules = (sLibOtherModules state) <> (S.fromList $ otherModules $ libBuildInfo $ condTreeData node)
+          }
+      pure newState
+    Nothing -> do
+      pure state
+
+go :: State -> String -> IO State
+go state cabalFile = do
+  pkg <- readGenericPackageDescription silent cabalFile
+  print cabalFile
+  let
+    prefix = directory (fromText $ T.pack cabalFile)
+  middle <- goLibrary state pkg
+  final <- foldlM (goExecutable $ T.unpack $ fromRight undefined $ toText prefix) middle (condExecutables pkg)
+  pure $ final {
+      sExecutables = (sExecutables final) <> (executables $ packageDescription pkg)
+    }
+
+exeFilter :: State -> Executable -> Executable
+exeFilter result exe = exe {
+  buildInfo = (buildInfo exe) {
+    targetBuildDepends = (filter (libFilter result) (targetBuildDepends (buildInfo exe))) <> [ Dependency "everything" anyVersion ]
+  }
+}
+
+libFilter :: State-> Dependency -> Bool
+libFilter result dep = notElem (depPkgName dep) (sNamesToExclude result)
+
+filterCondExecutables :: State -> [(UnqualComponentName, CondTree ConfVar [Dependency] Executable)] -> [(UnqualComponentName, CondTree ConfVar [Dependency] Executable)]
+filterCondExecutables result = map $ exeFilter2 result
+
+filterExecutables :: State -> [ Executable ] -> [ Executable ]
+filterExecutables result = map (exeFilter result)
+    
+exeFilter2 :: State -> (UnqualComponentName, CondTree ConfVar [Dependency] Executable) -> (UnqualComponentName, CondTree ConfVar [Dependency] Executable)
+exeFilter2 result (name, CondNode exe deps conf) = (name, CondNode (exeFilter result exe) (filter (libFilter result) deps) conf)
+
+filteredLibDepends :: State -> [Dependency]
+filteredLibDepends result = filter (libFilter result) (S.toList $ sLibDepends result)
+
+pathsFilter :: ModuleName -> Bool
+pathsFilter = not . isPrefixOf "Paths_" . toFilePath
+
 main :: IO ()
 main = do
-  let
-    go :: State -> String -> IO State
-    go state cabalFile = do
-      pkg <- readGenericPackageDescription silent cabalFile
-      print cabalFile
-      let
-        prefix = directory (fromText $ T.pack cabalFile)
-      middle <- goLibrary state pkg
-      final <- foldlM (goExecutable $ T.unpack $ fromRight undefined $ toText prefix) middle (condExecutables pkg)
-      pure $ final {
-          sExecutables = (sExecutables final) <> (executables $ packageDescription pkg)
-        }
-
-    fixExecutableSrc :: String -> Executable -> Executable
-    fixExecutableSrc prefix exe = exe {
-        buildInfo = (buildInfo exe) {
-            hsSourceDirs = map (prefix <>) (hsSourceDirs $ buildInfo exe)
-        }
-      }
-
-    goLibrary :: State -> GenericPackageDescription -> IO State
-    goLibrary state pkg = do
-      case (condLibrary pkg) of
-        Just node -> do
-          let
-            pkgname :: PackageName
-            pkgname = pkgName $ package $ packageDescription pkg
-            eModules = exposedModules $ condTreeData node
-            newState = state {
-                sExposedModules = (sExposedModules state) <> eModules
-              , sLibDepends = (sLibDepends state) <> (S.fromList $ targetBuildDepends $ libBuildInfo $ condTreeData node)
-              , sNamesToExclude = (sNamesToExclude state) <> [ pkgname ]
-              , sLibExtensions = (sLibExtensions state) <> (S.fromList $ defaultExtensions $ libBuildInfo $ condTreeData node)
-              , sLibOtherModules = (sLibOtherModules state) <> (S.fromList $ otherModules $ libBuildInfo $ condTreeData node)
-              }
-          pure newState
-        Nothing -> do
-          pure state
-    goExecutable :: String -> State -> (UnqualComponentName, CondTree ConfVar [ Dependency ] Executable) -> IO State
-    goExecutable prefix state (name, CondNode exe _ _) = do
-      -- by omiting half of the CondNode, the conditions within each executable section are missing
-      pure $ state {
-        sCondExecutables = (sCondExecutables state) <> [ (name, CondNode (fixExecutableSrc prefix exe) [] [] ) ]
-      }
   result <- getArgs >>= foldlM go (State [] S.empty [] S.empty S.empty [] [])
   let
-    genPackage = emptyGenericPackageDescription {
-        packageDescription = pkgDesc
-      , condLibrary = Just libNode
-      , condExecutables = filterCondExecutables $ sCondExecutables result
-      }
-    libNode :: CondTree ConfVar [Dependency] Library
-    libNode = CondNode {
-        condTreeComponents = []
-      , condTreeData = mergedLib
-      , condTreeConstraints = []
-      }
-    libFilter :: Dependency -> Bool
-    libFilter dep = notElem (depPkgName dep) (sNamesToExclude result)
-    filteredLibDepends :: [Dependency]
-    filteredLibDepends = filter libFilter (S.toList $ sLibDepends result)
-    pathsFilter :: ModuleName -> Bool
-    pathsFilter = not . isPrefixOf "Paths_" . toFilePath
     mergedLib = emptyLibrary {
         exposedModules = filter pathsFilter $ sExposedModules result
       , libBuildInfo = emptyBuildInfo {
             buildable = True
           , defaultLanguage = Just Haskell2010
           , defaultExtensions = S.toList $ sLibExtensions result
-          , otherModules = filter pathsFilter $ S.toList $ sLibOtherModules result
+          , otherModules = (filter pathsFilter $ S.toList $ sLibOtherModules result) <> [ "Pos.Infra.Util.SigHandler" ]
           , hsSourceDirs = [
               "acid-state-exts/src"
             , "binary/src"
@@ -137,6 +146,7 @@ main = do
             , "lib/src"
             , "networking/src"
             , "node-ipc/src"
+            , "tools/src"
             , "util/src"
             , "util/test"
             , "utxo/src"
@@ -145,28 +155,27 @@ main = do
             , "wallet/test"
             , "x509/src"
             ]
-          , targetBuildDepends = filteredLibDepends <> ([ Dependency "unix" anyVersion, Dependency "systemd" anyVersion ])
+          , targetBuildDepends = (filteredLibDepends result) <> ([ Dependency "unix" anyVersion, Dependency "systemd" anyVersion ])
           }
       }
-    filterCondExecutables :: [(UnqualComponentName, CondTree ConfVar [Dependency] Executable)] -> [(UnqualComponentName, CondTree ConfVar [Dependency] Executable)]
-    filterCondExecutables = map exeFilter2
-    filterExecutables :: [ Executable ] -> [ Executable ]
-    filterExecutables = map exeFilter
-    exeFilter :: Executable -> Executable
-    exeFilter exe = exe {
-      buildInfo = (buildInfo exe) {
-        targetBuildDepends = (filter libFilter (targetBuildDepends (buildInfo exe))) <> [ Dependency "everything" anyVersion ]
+    libNode :: CondTree ConfVar [Dependency] Library
+    libNode = CondNode {
+        condTreeComponents = []
+      , condTreeData = mergedLib
+      , condTreeConstraints = []
       }
-    }
-    exeFilter2 :: (UnqualComponentName, CondTree ConfVar [Dependency] Executable) -> (UnqualComponentName, CondTree ConfVar [Dependency] Executable)
-    exeFilter2 (name, CondNode exe deps conf) = (name, CondNode (exeFilter exe) (filter libFilter deps) conf)
     pkgDesc = emptyPackageDescription {
         package = PackageIdentifier {pkgName = mkPackageName "everything", pkgVersion = mkVersion [1,3,0]}
       , licenseRaw = Right MIT
-      , specVersionRaw = Right (unionVersionRanges (thisVersion (mkVersion [1,10])) (laterVersion (mkVersion [1,10])))
+      , specVersionRaw = Right (orLaterVersion (mkVersion [1,10]))
       , buildTypeRaw = Just Simple
-      , executables = filterExecutables $ sExecutables result
+      , executables = filterExecutables result $ sExecutables result
       , maintainer = "operations@iohk.io"
       , homepage = "https://github.com/input-output-hk/cardano-sl/#readme"
+      }
+    genPackage = emptyGenericPackageDescription {
+        packageDescription = pkgDesc
+      , condLibrary = Just libNode
+      , condExecutables = filterCondExecutables result $ sCondExecutables result
       }
   writeGenericPackageDescription "output" genPackage

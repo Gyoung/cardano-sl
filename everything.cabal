@@ -1,4 +1,4 @@
-cabal-version: ==1.10 || >1.10
+cabal-version: >=1.10
 name: everything
 version: 1.3.0
 license: MIT
@@ -297,6 +297,13 @@ library
         Ntp.Packet
         Bench.Network.Commons
         Cardano.NodeIPC
+        Pos.Tools.Launcher.Environment
+        Pos.Tools.Launcher.Logging
+        Pos.Tools.Dbgen.CLI
+        Pos.Tools.Dbgen.Lib
+        Pos.Tools.Dbgen.Rendering
+        Pos.Tools.Dbgen.Stats
+        Pos.Tools.Dbgen.Types
         Pos.Util
         Pos.Util.CompileInfo
         Pos.Util.Concurrent
@@ -564,8 +571,8 @@ library
     hs-source-dirs: acid-state-exts/src binary/src binary/test
                     chain/src chain/test client/src core/src core/test crypto
                     crypto/test db/src generator/src infra/src lib/src networking/src
-                    node-ipc/src util/src util/test utxo/src wallet-new/src wallet/src
-                    wallet/test x509/src
+                    node-ipc/src tools/src util/src util/test utxo/src wallet-new/src
+                    wallet/src wallet/test x509/src
     other-modules:
         Data.NonEmptySet
         Pos.Binary.Class.Core
@@ -817,6 +824,7 @@ library
         Pos.Util.Log.Rotator
         Pos.Util.Log.Scribes
         Test.Pos.Crypto.Arbitrary.Unsafe
+        Pos.Infra.Util.SigHandler
     default-language: Haskell2010
     default-extensions: UndecidableInstances MultiParamTypeClasses
                         FunctionalDependencies RankNTypes ScopedTypeVariables
@@ -926,7 +934,9 @@ library
         network-transport -any,
         network-transport-tcp -any,
         optparse-applicative -any,
+        optparse-generic -any,
         parsec -any,
+        parsers -any,
         plutus-prototype -any,
         pretty-show -any,
         process -any,
@@ -957,6 +967,7 @@ library
         sqlite-simple-errors -any,
         stm -any,
         streaming-commons -any,
+        string-conv -any,
         swagger2 -any,
         tagged -any,
         tar -any,
@@ -971,6 +982,7 @@ library
         transformers -any,
         transformers-base -any,
         transformers-lift -any,
+        trifecta -any,
         universum -any,
         unliftio -any,
         unliftio-core -any,
@@ -1102,6 +1114,7 @@ executable bench-receiver
         everything -any
 
 executable bench-log-reader
+    buildable: False
     main-is: Main.hs
     hs-source-dirs: ./networking/bench/LogReader
     other-modules:
@@ -1124,6 +1137,200 @@ executable bench-log-reader
         text -any,
         formatting -any,
         unliftio-core -any,
+        everything -any
+
+executable dbgen
+    main-is: Main.hs
+    build-tools: cpphs >=1.19
+    hs-source-dirs: ./tools/src/dbgen
+    default-language: Haskell2010
+    default-extensions: DeriveDataTypeable DeriveGeneric
+                        GeneralizedNewtypeDeriving StandaloneDeriving FlexibleContexts
+                        FlexibleInstances MultiParamTypeClasses FunctionalDependencies
+                        DefaultSignatures NoImplicitPrelude OverloadedStrings
+                        TypeApplications TupleSections ViewPatterns LambdaCase MultiWayIf
+                        ConstraintKinds UndecidableInstances BangPatterns
+                        ScopedTypeVariables
+    ghc-options: -threaded -rtsopts -Wall -O2 -pgmP cpphs -optP "--cpp"
+    build-depends:
+        everything -any
+
+executable cardano-genupdate
+    main-is: Main.hs
+    hs-source-dirs: ./tools/src/genupdate
+    default-language: Haskell2010
+    default-extensions: OverloadedStrings NoImplicitPrelude
+                        BangPatterns ApplicativeDo ScopedTypeVariables MonadFailDesugaring
+    ghc-options: -threaded -Wall -O2
+    build-depends:
+        base -any,
+        ansi-wl-pprint -any,
+        bytestring -any,
+        cryptonite -any,
+        neat-interpolation -any,
+        optparse-applicative -any,
+        filepath -any,
+        formatting -any,
+        process -any,
+        tar -any,
+        text -any,
+        universum -any,
+        unix-compat -any,
+        everything -any
+
+executable cardano-keygen
+    main-is: Main.hs
+    hs-source-dirs: ./tools/src/keygen
+    other-modules:
+        KeygenOptions
+        Dump
+    default-language: Haskell2010
+    default-extensions: DeriveDataTypeable DeriveGeneric
+                        GeneralizedNewtypeDeriving StandaloneDeriving FlexibleContexts
+                        FlexibleInstances MultiParamTypeClasses FunctionalDependencies
+                        DefaultSignatures NoImplicitPrelude OverloadedStrings
+                        TypeApplications TupleSections ViewPatterns LambdaCase MultiWayIf
+                        ConstraintKinds UndecidableInstances BangPatterns
+                        ScopedTypeVariables MonadFailDesugaring
+    ghc-options: -threaded -rtsopts -Wall -O2
+    build-depends:
+        everything -any
+
+executable cardano-launcher
+    main-is: Main.hs
+    hs-source-dirs: ./tools/src/launcher
+    default-language: Haskell2010
+    default-extensions: OverloadedStrings TupleSections
+                        TypeApplications BangPatterns ScopedTypeVariables
+                        MonadFailDesugaring
+    ghc-options: -threaded -Wall -O2
+    build-depends:
+        aeson -any,
+        aeson-options -any,
+        ansi-wl-pprint -any,
+        async -any,
+        base -any,
+        bytestring -any,
+        cardano-report-server >=0.2.1,
+        directory -any,
+        filepath -any,
+        formatting -any,
+        lens -any,
+        lifted-async -any,
+        neat-interpolation -any,
+        optparse-applicative -any,
+        process -any,
+        safe-exceptions -any,
+        serokell-util -any,
+        silently -any,
+        text -any,
+        time-units -any,
+        universum -any,
+        unordered-containers -any,
+        yaml -any,
+        everything -any
+
+executable cardano-addr-convert
+    main-is: Main.hs
+    hs-source-dirs: ./tools/src/addr-convert
+    default-language: Haskell2010
+    default-extensions: DeriveDataTypeable DeriveGeneric
+                        GeneralizedNewtypeDeriving StandaloneDeriving FlexibleContexts
+                        FlexibleInstances MultiParamTypeClasses FunctionalDependencies
+                        DefaultSignatures NoImplicitPrelude OverloadedStrings
+                        TypeApplications TupleSections ViewPatterns LambdaCase MultiWayIf
+                        ConstraintKinds UndecidableInstances ApplicativeDo
+                        ScopedTypeVariables MonadFailDesugaring
+    ghc-options: -threaded -Wall -O2
+    build-depends:
+        base -any,
+        ansi-wl-pprint -any,
+        neat-interpolation -any,
+        optparse-applicative -any,
+        text -any,
+        universum -any,
+        everything -any
+
+executable cardano-cli-docs
+    main-is: Main.hs
+    build-tools: cpphs >=1.19
+    hs-source-dirs: ./tools/src/cli-docs
+    default-language: Haskell2010
+    default-extensions: NoImplicitPrelude BangPatterns
+                        OverloadedStrings ApplicativeDo ScopedTypeVariables
+                        MonadFailDesugaring
+    ghc-options: -threaded -rtsopts -Wall -O2 -pgmP cpphs -optP "--cpp"
+    build-depends:
+        everything -any
+
+executable cardano-post-mortem
+    main-is: Main.hs
+    hs-source-dirs: ./tools/src/post-mortem
+    other-modules:
+        JSONLog
+        Options
+        Statistics
+        Statistics.Block
+        Statistics.Chart
+        Statistics.CSV
+        Statistics.Focus
+        Statistics.Graph
+        Statistics.MemPool
+        Statistics.Report
+        Statistics.Throughput
+        Statistics.Tx
+        Types
+        Util.Aeson
+        Util.Pipes
+        Util.Safe
+    default-language: Haskell2010
+    default-extensions: DeriveDataTypeable DeriveGeneric
+                        GeneralizedNewtypeDeriving StandaloneDeriving FlexibleContexts
+                        FlexibleInstances MultiParamTypeClasses FunctionalDependencies
+                        DefaultSignatures NoImplicitPrelude OverloadedStrings
+                        TypeApplications TupleSections ViewPatterns LambdaCase MultiWayIf
+                        ConstraintKinds UndecidableInstances ScopedTypeVariables
+                        ScopedTypeVariables BangPatterns MonadFailDesugaring
+    ghc-options: -threaded -Wall -O2
+    build-depends:
+        everything -any
+
+executable cardano-blockchain-analyser
+    main-is: Main.hs
+    build-tools: cpphs >=1.19
+    hs-source-dirs: ./tools/src/blockchain-analyser
+    other-modules:
+        Options
+        Types
+        Rendering
+    default-language: Haskell2010
+    default-extensions: NoImplicitPrelude OverloadedStrings
+                        TypeApplications ScopedTypeVariables FlexibleContexts
+                        MonadFailDesugaring
+    ghc-options: -threaded -rtsopts -Wall -O2 -pgmP cpphs -optP "--cpp"
+    build-depends:
+        everything -any
+
+executable cardano-x509-certificates
+    main-is: Main.hs
+    hs-source-dirs: ./tools/src/gencerts
+    default-language: Haskell2010
+    default-extensions: DeriveGeneric NoImplicitPrelude
+                        OverloadedStrings TupleSections TypeApplications
+    ghc-options: -threaded -rtsopts -Wall -O2
+    build-depends:
+        base >=4.7 && <5,
+        filepath -any,
+        optparse-applicative -any,
+        universum -any,
+        everything -any
+
+executable genesis-hash
+    main-is: Main.hs
+    hs-source-dirs: ./tools/src/genesis-hash
+    default-language: Haskell2010
+    ghc-options: -threaded -rtsopts -Wall -O2
+    build-depends:
         everything -any
 
 executable cardano-node
