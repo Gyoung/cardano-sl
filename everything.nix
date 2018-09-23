@@ -34,7 +34,7 @@
 , x509-validation, yaml
 }:
 mkDerivation {
-  pname = "cardano-sl-wallet-new";
+  pname = "everything";
   version = "1.3.0";
   src = ./.;
   libraryHaskellDepends = [

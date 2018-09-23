@@ -1,4 +1,4 @@
-name: cardano-sl-wallet-new
+name: everything
 version: 1.3.0
 cabal-version: >=1.10
 build-type: Simple

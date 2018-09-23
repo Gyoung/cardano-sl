@@ -112,7 +112,7 @@ main = do
       , libExposed = True
       }
     pkgDesc = PackageDescription {
-        package = PackageIdentifier {pkgName = mkPackageName "cardano-sl-wallet-new", pkgVersion = mkVersion [1,3,0]}
+        package = PackageIdentifier {pkgName = mkPackageName "everything", pkgVersion = mkVersion [1,3,0]}
       , license = MIT
       , customFieldsPD = []
       , sourceRepos = []
