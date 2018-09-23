@@ -561,11 +561,11 @@ library
         Test.Pos.Wallet.Web.Mode
         Data.X509.Extra
         Cardano.X509.Configuration
-    hs-source-dirs: wallet-new/src utxo/src x509/src wallet/src
-                    wallet/test util/src node-ipc/src networking/src db/src infra/src
-                    generator/src crypto client/src core/src binary/src chain/src
-                    acid-state-exts/src lib/src binary/test chain/test core/test
-                    crypto/test util/test
+    hs-source-dirs: acid-state-exts/src binary/src binary/test
+                    chain/src chain/test client/src core/src core/test crypto
+                    crypto/test db/src generator/src infra/src lib/src networking/src
+                    node-ipc/src util/src util/test utxo/src wallet-new/src wallet/src
+                    wallet/test x509/src
     other-modules:
         Data.NonEmptySet
         Pos.Binary.Class.Core
@@ -1016,7 +1016,8 @@ executable cardano-sl-verification-bench-exe
         random -any,
         text -any,
         time-units -any,
-        universum >=0.1.11
+        universum >=0.1.11,
+        everything -any
 
 executable discovery
     main-is: Discovery.hs
@@ -1033,7 +1034,8 @@ executable discovery
         contravariant -any,
         network-transport -any,
         network-transport-tcp -any,
-        random -any
+        random -any,
+        everything -any
 
 executable ping-pong
     main-is: PingPong.hs
@@ -1050,7 +1052,8 @@ executable ping-pong
         contravariant -any,
         network-transport -any,
         network-transport-tcp -any,
-        random -any
+        random -any,
+        everything -any
 
 executable bench-sender
     main-is: Main.hs
@@ -1075,7 +1078,8 @@ executable bench-sender
         safe-exceptions -any,
         serokell-util -any,
         time -any,
-        time-units -any
+        time-units -any,
+        everything -any
 
 executable bench-receiver
     main-is: Main.hs
@@ -1094,7 +1098,8 @@ executable bench-receiver
         random -any,
         safe-exceptions -any,
         serokell-util -any,
-        text -any
+        text -any,
+        everything -any
 
 executable bench-log-reader
     main-is: Main.hs
@@ -1118,7 +1123,8 @@ executable bench-log-reader
         safe-exceptions -any,
         text -any,
         formatting -any,
-        unliftio-core -any
+        unliftio-core -any,
+        everything -any
 
 executable cardano-node
     main-is: Main.hs
@@ -1134,7 +1140,8 @@ executable cardano-node
         base -any,
         stm -any,
         text -any,
-        universum -any
+        universum -any,
+        everything -any
 
 executable cardano-generate-swagger-file
     main-is: Main.hs
@@ -1151,7 +1158,8 @@ executable cardano-generate-swagger-file
         optparse-applicative -any,
         servant-server -any,
         swagger2 -any,
-        universum >=0.1.11
+        universum >=0.1.11,
+        everything -any
 
 executable wal-integr-test
     main-is: Main.hs
@@ -1198,4 +1206,5 @@ executable wal-integr-test
         text -any,
         formatting -any,
         universum -any,
-        x509-store -any
+        x509-store -any,
+        everything -any

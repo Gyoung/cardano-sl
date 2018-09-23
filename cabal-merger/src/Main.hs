@@ -109,6 +109,7 @@ main = do
       }
     libFilter :: Dependency -> Bool
     libFilter dep = notElem (depPkgName dep) (sNamesToExclude result)
+    filteredLibDepends :: [Dependency]
     filteredLibDepends = filter libFilter (S.toList $ sLibDepends result)
     pathsFilter :: ModuleName -> Bool
     pathsFilter = not . isPrefixOf "Paths_" . toFilePath
@@ -120,29 +121,29 @@ main = do
           , defaultExtensions = S.toList $ sLibExtensions result
           , otherModules = filter pathsFilter $ S.toList $ sLibOtherModules result
           , hsSourceDirs = [
-              "wallet-new/src"
-            , "utxo/src"
-            , "x509/src"
-            , "wallet/src"
-            , "wallet/test"
-            , "util/src"
-            , "node-ipc/src"
-            , "networking/src"
-            , "db/src"
-            , "infra/src"
-            , "generator/src"
-            , "crypto"
+              "acid-state-exts/src"
+            , "binary/src"
+            , "binary/test"
+            , "chain/src"
+            , "chain/test"
             , "client/src"
             , "core/src"
-            , "binary/src"
-            , "chain/src"
-            , "acid-state-exts/src"
-            , "lib/src"
-            , "binary/test"
-            , "chain/test"
             , "core/test"
+            , "crypto"
             , "crypto/test"
+            , "db/src"
+            , "generator/src"
+            , "infra/src"
+            , "lib/src"
+            , "networking/src"
+            , "node-ipc/src"
+            , "util/src"
             , "util/test"
+            , "utxo/src"
+            , "wallet-new/src"
+            , "wallet/src"
+            , "wallet/test"
+            , "x509/src"
             ]
           , targetBuildDepends = filteredLibDepends <> ([ Dependency "unix" anyVersion, Dependency "systemd" anyVersion ])
           }
@@ -154,7 +155,7 @@ main = do
     exeFilter :: Executable -> Executable
     exeFilter exe = exe {
       buildInfo = (buildInfo exe) {
-        targetBuildDepends = filter libFilter (targetBuildDepends (buildInfo exe))
+        targetBuildDepends = (filter libFilter (targetBuildDepends (buildInfo exe))) <> [ Dependency "everything" anyVersion ]
       }
     }
     exeFilter2 :: (UnqualComponentName, CondTree ConfVar [Dependency] Executable) -> (UnqualComponentName, CondTree ConfVar [Dependency] Executable)
