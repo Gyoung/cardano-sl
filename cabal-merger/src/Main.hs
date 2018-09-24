@@ -107,7 +107,7 @@ filterCondExecutables result = map $ exeFilter2 result
 
 filterExecutables :: State -> [ Executable ] -> [ Executable ]
 filterExecutables result = map (exeFilter result)
-    
+
 exeFilter2 :: State -> (UnqualComponentName, CondTree ConfVar [Dependency] Executable) -> (UnqualComponentName, CondTree ConfVar [Dependency] Executable)
 exeFilter2 result (name, CondNode exe deps conf) = (name, CondNode (exeFilter result exe) (filter (libFilter result) deps) conf)
 

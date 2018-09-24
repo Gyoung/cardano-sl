@@ -1,7 +1,7 @@
+{-# LANGUAGE CPP              #-}
 {-# LANGUAGE QuasiQuotes      #-}
 {-# LANGUAGE RecordWildCards  #-}
 {-# LANGUAGE TypeApplications #-}
-{-# LANGUAGE CPP                   #-}
 
 module Main
   ( main

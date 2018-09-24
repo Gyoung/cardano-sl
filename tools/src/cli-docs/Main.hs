@@ -1,6 +1,6 @@
+{-# LANGUAGE CPP             #-}
 {-# LANGUAGE QuasiQuotes     #-}
 {-# LANGUAGE RecordWildCards #-}
-{-# LANGUAGE CPP                   #-}
 
 module Main ( module Main ) where
 
