@@ -86,11 +86,10 @@ newWallet genesisConfig NewWallet{..} = do
     let newWalletHandler CreateWallet  = V0.newWalletNoThrow
         newWalletHandler RestoreWallet = V0.restoreWalletFromSeedNoThrow genesisConfig
         (V1 spendingPassword) = fromMaybe (V1 mempty) newwalSpendingPassword
-        (BackupPhrase backupPhrase) = newwalBackupPhrase
     initMeta <- V0.CWalletMeta <$> pure newwalName
                               <*> migrate newwalAssuranceLevel
                               <*> pure 0
-    let walletInit = V0.CWalletInit initMeta (V0.CBackupPhrase backupPhrase)
+    let walletInit = V0.CWalletInit initMeta $ error "TODO: File should be removed"
     single <$> do
         ev0wallet <- newWalletHandler newwalOperation spendingPassword walletInit
         case ev0wallet of
