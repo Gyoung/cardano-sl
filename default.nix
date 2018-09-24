@@ -49,6 +49,9 @@ let
         "-f-asserts"
       ];
     });
+    # cabal-merger needs cabal 2.2.0.0
+    # but if that is in the stack file, the windows build breaks
+    Cabal = self.callPackage ./cabal-merger/cabal.nix {};
     cardano-sl = overrideCabal super.cardano-sl (drv: {
       # production full nodes shouldn't use wallet as it means different constants
       configureFlags = (drv.configureFlags or []) ++ [

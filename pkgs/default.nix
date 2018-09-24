@@ -317,23 +317,19 @@ license = stdenv.lib.licenses.bsd3;
 , deepseq
 , directory
 , filepath
-, mtl
-, parsec
 , pretty
 , process
 , stdenv
-, text
 , time
-, transformers
 , unix
 }:
 mkDerivation {
 
 pname = "Cabal";
-version = "2.2.0.0";
-sha256 = "26a9b178fd83751f3fa6977922c447b63ac837a5371878ad7e1253beddfb042f";
+version = "2.0.1.1";
+sha256 = "802bc6d0113fdb734ea938ad2aadc14f590e372b55d56be6712de319bb343d1b";
 revision = "1";
-editedCabalFile = "1fa2lvwj1b0yj06k8pb3smdhdyl94dxy9ac9jqmmj9cdv8msrb8x";
+editedCabalFile = "17ydppw8x5cx5whrs44yxirh7xgcaa6gzvxmlgqnbalcf8wkj23l";
 libraryHaskellDepends = [
 array
 base
@@ -343,13 +339,9 @@ containers
 deepseq
 directory
 filepath
-mtl
-parsec
 pretty
 process
-text
 time
-transformers
 unix
 ];
 doHaddock = false;
@@ -14160,6 +14152,8 @@ license = stdenv.lib.licenses.bsd3;
 , Cabal
 , containers
 , stdenv
+, system-filepath
+, text
 }:
 mkDerivation {
 
@@ -14172,6 +14166,8 @@ executableHaskellDepends = [
 base
 Cabal
 containers
+system-filepath
+text
 ];
 doHaddock = false;
 license = stdenv.lib.licenses.mit;

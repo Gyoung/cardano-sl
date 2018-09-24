@@ -7,7 +7,7 @@ license:       MIT
 executable cabal-merger
   hs-source-dirs: src
   build-depends:       base
-                     , Cabal >=2.2
+                     , Cabal == 1.20.* || == 1.24.* || >= 2.2
                      , containers
                      , system-filepath
                      , text

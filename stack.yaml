@@ -236,7 +236,6 @@ extra-deps:
 - loc-0.1.3.2
 - json-sop-0.2.0.3
 - lens-sop-0.2.0.2
-- Cabal-2.2.0.0
 - lzma-clib-5.2.2
 - micro-recursion-schemes-5.0.2.2
 

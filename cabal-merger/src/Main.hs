@@ -57,7 +57,6 @@ fixExecutableSrc prefix exe = exe {
 
 goExecutable :: String -> State -> (UnqualComponentName, CondTree ConfVar [ Dependency ] Executable) -> IO State
 goExecutable prefix state (name, CondNode exe deps conf) = do
-  -- by omiting half of the CondNode, the conditions within each executable section are missing
   pure $ state {
     sCondExecutables = (sCondExecutables state) <> [ (name, CondNode (fixExecutableSrc prefix exe) deps conf ) ]
   }
