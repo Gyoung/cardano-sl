@@ -56,10 +56,10 @@ fixExecutableSrc prefix exe = exe {
   }
 
 goExecutable :: String -> State -> (UnqualComponentName, CondTree ConfVar [ Dependency ] Executable) -> IO State
-goExecutable prefix state (name, CondNode exe _ _) = do
+goExecutable prefix state (name, CondNode exe deps conf) = do
   -- by omiting half of the CondNode, the conditions within each executable section are missing
   pure $ state {
-    sCondExecutables = (sCondExecutables state) <> [ (name, CondNode (fixExecutableSrc prefix exe) [] [] ) ]
+    sCondExecutables = (sCondExecutables state) <> [ (name, CondNode (fixExecutableSrc prefix exe) deps conf ) ]
   }
 
 goLibrary :: State -> GenericPackageDescription -> IO State
@@ -128,7 +128,7 @@ main = do
             buildable = True
           , defaultLanguage = Just Haskell2010
           , defaultExtensions = S.toList $ sLibExtensions result
-          , otherModules = (filter pathsFilter $ S.toList $ sLibOtherModules result) <> [ "Pos.Infra.Util.SigHandler" ]
+          , otherModules = (filter pathsFilter $ S.toList $ sLibOtherModules result) <> [ "Pos.Infra.Util.SigHandler", "Paths_everything" ]
           , hsSourceDirs = [
               "acid-state-exts/src"
             , "binary/src"

@@ -1,5 +1,6 @@
 {-# LANGUAGE QuasiQuotes     #-}
 {-# LANGUAGE RecordWildCards #-}
+{-# LANGUAGE CPP                   #-}
 
 module Main ( module Main ) where
 
@@ -18,7 +19,11 @@ import           System.Environment (getProgName)
 import           System.FilePath.Posix ((<.>), (</>))
 import           System.Process (readProcess)
 
+#ifdef VERSION_everything
+import           Paths_everything (version)
+#else
 import           Paths_cardano_sl (version)
+#endif
 
 type Help     = Text
 type Markdown = Text

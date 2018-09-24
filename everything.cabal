@@ -825,6 +825,7 @@ library
         Pos.Util.Log.Scribes
         Test.Pos.Crypto.Arbitrary.Unsafe
         Pos.Infra.Util.SigHandler
+        Paths_everything
     default-language: Haskell2010
     default-extensions: UndecidableInstances MultiParamTypeClasses
                         FunctionalDependencies RankNTypes ScopedTypeVariables
@@ -1030,6 +1031,10 @@ executable cardano-sl-verification-bench-exe
         time-units -any,
         universum >=0.1.11,
         everything -any
+    
+    if os(linux)
+        ld-options: -fuse-ld=gold
+        ghc-options: -optl-fuse-ld=gold
 
 executable discovery
     main-is: Discovery.hs
@@ -1092,6 +1097,10 @@ executable bench-sender
         time -any,
         time-units -any,
         everything -any
+    
+    if flag(benchmarks)
+    else
+        buildable: False
 
 executable bench-receiver
     main-is: Main.hs
@@ -1112,9 +1121,12 @@ executable bench-receiver
         serokell-util -any,
         text -any,
         everything -any
+    
+    if flag(benchmarks)
+    else
+        buildable: False
 
 executable bench-log-reader
-    buildable: False
     main-is: Main.hs
     hs-source-dirs: ./networking/bench/LogReader
     other-modules:
@@ -1138,6 +1150,10 @@ executable bench-log-reader
         formatting -any,
         unliftio-core -any,
         everything -any
+    
+    if flag(benchmarks)
+    else
+        buildable: False
 
 executable dbgen
     main-is: Main.hs
@@ -1153,7 +1169,25 @@ executable dbgen
                         ScopedTypeVariables
     ghc-options: -threaded -rtsopts -Wall -O2 -pgmP cpphs -optP "--cpp"
     build-depends:
+        base >=4.7 && <5,
+        containers -any,
+        data-default -any,
+        network-transport-tcp >=0.6,
+        optparse-generic -any,
+        stm -any,
+        text -any,
+        time -any,
+        time-units -any,
+        universum >=0.1.11,
+        unordered-containers -any,
         everything -any
+    
+    if os(linux)
+        ld-options: -fuse-ld=gold
+        ghc-options: -optl-fuse-ld=gold
+    
+    if flag(for-installer)
+        buildable: False
 
 executable cardano-genupdate
     main-is: Main.hs
@@ -1177,6 +1211,10 @@ executable cardano-genupdate
         universum -any,
         unix-compat -any,
         everything -any
+    
+    if os(linux)
+        ld-options: -fuse-ld=gold
+        ghc-options: -optl-fuse-ld=gold
 
 executable cardano-keygen
     main-is: Main.hs
@@ -1195,6 +1233,35 @@ executable cardano-keygen
     ghc-options: -threaded -rtsopts -Wall -O2
     build-depends:
         everything -any
+    
+    if !flag(for-installer)
+        build-depends:
+            base -any,
+            base58-bytestring -any,
+            bytestring >=0.10,
+            canonical-json -any,
+            cardano-sl -any,
+            cardano-sl-chain -any,
+            cardano-sl-core -any,
+            cardano-sl-crypto -any,
+            cardano-sl-util -any,
+            directory -any,
+            filepath -any,
+            formatting -any,
+            Glob -any,
+            lens -any,
+            optparse-applicative >=0.12,
+            serokell-util >=0.1,
+            text -any,
+            universum >=0.1
+    
+    if os(linux)
+        ld-options: -fuse-ld=gold
+        ghc-options: -optl-fuse-ld=gold
+    
+    if flag(for-installer)
+        buildable: False
+    else
 
 executable cardano-launcher
     main-is: Main.hs
@@ -1229,6 +1296,17 @@ executable cardano-launcher
         unordered-containers -any,
         yaml -any,
         everything -any
+    
+    if !os(windows)
+        build-depends:
+            unix -any
+    
+    if os(linux)
+        ld-options: -fuse-ld=gold
+        ghc-options: -optl-fuse-ld=gold
+    
+    if os(windows)
+        ld-options: -mwindows
 
 executable cardano-addr-convert
     main-is: Main.hs
@@ -1250,6 +1328,10 @@ executable cardano-addr-convert
         text -any,
         universum -any,
         everything -any
+    
+    if os(linux)
+        ld-options: -fuse-ld=gold
+        ghc-options: -optl-fuse-ld=gold
 
 executable cardano-cli-docs
     main-is: Main.hs
@@ -1261,7 +1343,22 @@ executable cardano-cli-docs
                         MonadFailDesugaring
     ghc-options: -threaded -rtsopts -Wall -O2 -pgmP cpphs -optP "--cpp"
     build-depends:
+        base -any,
+        directory -any,
+        filepath -any,
+        neat-interpolation -any,
+        optparse-applicative -any,
+        process -any,
+        text -any,
+        universum >=0.1.11,
         everything -any
+    
+    if os(linux)
+        ld-options: -fuse-ld=gold
+        ghc-options: -optl-fuse-ld=gold
+    
+    if flag(for-installer)
+        buildable: False
 
 executable cardano-post-mortem
     main-is: Main.hs
@@ -1294,6 +1391,45 @@ executable cardano-post-mortem
     ghc-options: -threaded -Wall -O2
     build-depends:
         everything -any
+    
+    if (flag(postmortem) && !flag(for-installer))
+        build-depends:
+            Chart -any,
+            Chart-diagrams -any,
+            MonadRandom -any,
+            aeson -any,
+            attoparsec -any,
+            base -any,
+            bytestring -any,
+            cardano-sl -any,
+            cardano-sl-chain -any,
+            cardano-sl-core -any,
+            cardano-sl-infra -any,
+            cardano-sl-chain -any,
+            cardano-sl-util -any,
+            containers -any,
+            cassava -any,
+            directory -any,
+            fgl -any,
+            filepath -any,
+            foldl -any,
+            graphviz -any,
+            optparse-applicative -any,
+            pipes -any,
+            pipes-bytestring -any,
+            pipes-interleave -any,
+            pipes-safe -any,
+            process -any,
+            random -any,
+            text -any,
+            time-units -any,
+            universum >=0.1.11
+    else
+        buildable: False
+    
+    if os(linux)
+        ld-options: -fuse-ld=gold
+        ghc-options: -optl-fuse-ld=gold
 
 executable cardano-blockchain-analyser
     main-is: Main.hs
@@ -1310,6 +1446,35 @@ executable cardano-blockchain-analyser
     ghc-options: -threaded -rtsopts -Wall -O2 -pgmP cpphs -optP "--cpp"
     build-depends:
         everything -any
+    
+    if !flag(for-installer)
+        build-depends:
+            ansi-wl-pprint -any,
+            base -any,
+            cardano-sl -any,
+            cardano-sl-binary -any,
+            cardano-sl-chain -any,
+            cardano-sl-core -any,
+            cardano-sl-crypto -any,
+            cardano-sl-db -any,
+            cardano-sl-util -any,
+            directory -any,
+            formatting -any,
+            lens -any,
+            mtl -any,
+            neat-interpolation -any,
+            optparse-applicative -any,
+            serokell-util -any,
+            tabl -any,
+            text -any,
+            universum >=0.1.11
+    
+    if os(linux)
+        ld-options: -fuse-ld=gold
+        ghc-options: -optl-fuse-ld=gold
+    
+    if flag(for-installer)
+        buildable: False
 
 executable cardano-x509-certificates
     main-is: Main.hs
@@ -1331,7 +1496,20 @@ executable genesis-hash
     default-language: Haskell2010
     ghc-options: -threaded -rtsopts -Wall -O2
     build-depends:
+        base -any,
+        universum -any,
+        bytestring -any,
+        cryptonite -any,
+        canonical-json -any,
         everything -any
+    
+    if os(linux)
+        ld-options: -fuse-ld=gold
+        ghc-options: -optl-fuse-ld=gold
+    
+    if flag(for-installer)
+        buildable: False
+    else
 
 executable cardano-node
     main-is: Main.hs
