@@ -127,8 +127,8 @@ packages:
 # Waiting on the flexible types PR to be merged:
 # https://github.com/acid-state/acid-state/pull/94
 - location:
-    git: https://github.com/acid-state/acid-state
-    commit: 0ab7565c6a04e355631c5cc24b5c358579623697
+    git: https://github.com/parsonsmatt/acid-state
+    commit: a1b23e2056f134e53f705a694ab85deeecabec5c
   extra-dep: true
 
 # Required for explorer.
