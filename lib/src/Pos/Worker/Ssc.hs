@@ -97,7 +97,7 @@ sscWorkers
      , HasMisbehaviorMetrics ctx
      )
   => Genesis.Config
-  -> [ (String, Diffusion m -> m ()) ]
+  -> [ (Text, Diffusion m -> m ()) ]
 sscWorkers genesisConfig =
     [ ("ssc on new slot", onNewSlotSsc genesisConfig)
     , ("ssc check for ignored", checkForIgnoredCommitmentsWorker genesisConfig)

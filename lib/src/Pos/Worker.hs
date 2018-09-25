@@ -31,7 +31,7 @@ allWorkers
     => Genesis.Config
     -> TxpConfiguration
     -> NodeResources ext
-    -> [ (String, Diffusion m -> m ()) ]
+    -> [ (Text, Diffusion m -> m ()) ]
 allWorkers genesisConfig txpConfig NodeResources {..} = mconcat
     [ sscWorkers genesisConfig
     , usWorkers genesisConfig

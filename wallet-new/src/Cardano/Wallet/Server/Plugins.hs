@@ -63,7 +63,7 @@ import           Pos.Wallet.Web ()
 
 
 -- A @Plugin@ running in the monad @m@.
-type Plugin m = [ (String, Diffusion m -> m ()) ]
+type Plugin m = [ (Text, Diffusion m -> m ()) ]
 
 
 -- | A @Plugin@ to start the wallet REST server

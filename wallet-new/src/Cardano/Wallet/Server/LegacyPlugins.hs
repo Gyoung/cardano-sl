@@ -66,7 +66,7 @@ import           Pos.WorkMode (WorkMode)
 
 
 -- A @Plugin@ running in the monad @m@.
-type Plugin m = [ (String, Diffusion m -> m ()) ]
+type Plugin m = [ (Text, Diffusion m -> m ()) ]
 
 -- | A @Plugin@ to periodically compact & snapshot the acid-state database.
 acidCleanupWorker :: WalletBackendParams

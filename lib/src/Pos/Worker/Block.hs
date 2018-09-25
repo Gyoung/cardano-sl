@@ -83,7 +83,7 @@ blkWorkers
        )
     => Genesis.Config
     -> TxpConfiguration
-    -> [ (String, Diffusion m -> m ()) ]
+    -> [ (Text, Diffusion m -> m ()) ]
 blkWorkers genesisConfig txpConfig =
     [ ("block creator", blkCreatorWorker genesisConfig txpConfig)
     , ("block informer", informerWorker $ configBlkSecurityParam genesisConfig)
