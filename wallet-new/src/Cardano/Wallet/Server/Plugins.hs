@@ -63,7 +63,7 @@ import           Pos.Wallet.Web ()
 
 
 -- A @Plugin@ running in the monad @m@.
-type Plugin m = [Diffusion m -> m ()]
+type Plugin m = [ (String, Diffusion m -> m ()) ]
 
 
 -- | A @Plugin@ to start the wallet REST server
@@ -74,7 +74,9 @@ apiServer
     -> [Middleware]
     -> Plugin Kernel.WalletMode
 apiServer protocolMagic (NewWalletBackendParams WalletBackendParams{..}) (passiveLayer, passiveWallet) middlewares =
-    pure $ \diffusion -> do
+    pure ("wallet-new api worker", worker)
+  where
+    worker diffusion = do
         env <- ask
         let diffusion' = Kernel.fromDiffusion (lower env) diffusion
         WalletLayer.Kernel.bracketActiveWallet protocolMagic passiveLayer passiveWallet diffusion' $ \active _ -> do
@@ -86,7 +88,6 @@ apiServer protocolMagic (NewWalletBackendParams WalletBackendParams{..}) (passiv
             (if isDebugMode walletRunMode then Nothing else walletTLSParams)
             (Just $ setOnExceptionResponse exceptionHandler defaultSettings)
             (Just $ portCallback ctx)
-  where
     (ip, port) = walletAddress
 
     exceptionHandler :: SomeException -> Response
@@ -128,15 +129,15 @@ docServer
     :: (HasConfigurations, HasCompileInfo)
     => NewWalletBackendParams
     -> Plugin Kernel.WalletMode
-docServer (NewWalletBackendParams WalletBackendParams{..}) = pure $ \_ ->
-    serveDocImpl
-        application
-        (BS8.unpack ip)
-        port
-        (if isDebugMode walletRunMode then Nothing else walletTLSParams)
-        (Just defaultSettings)
-        Nothing
+docServer (NewWalletBackendParams WalletBackendParams{..}) = pure ("doc worker", const worker)
   where
+    worker = serveDocImpl
+          application
+          (BS8.unpack ip)
+          port
+          (if isDebugMode walletRunMode then Nothing else walletTLSParams)
+          (Just defaultSettings)
+          Nothing
     (ip, port) = walletDocAddress
 
     application :: Kernel.WalletMode Application
@@ -149,34 +150,39 @@ monitoringServer :: HasConfigurations
                  -> Plugin Kernel.WalletMode
 monitoringServer (NewWalletBackendParams WalletBackendParams{..}) =
     case enableMonitoringApi of
-         True  -> pure $ \_ -> do
-             serveImpl Pos.Web.Server.application
-                       "127.0.0.1"
-                       monitoringApiPort
-                       walletTLSParams
-                       Nothing
-                       Nothing
+         True  -> pure ("monitoring worker", const worker)
          False -> []
+  where
+    worker = serveImpl Pos.Web.Server.application
+                   "127.0.0.1"
+                   monitoringApiPort
+                   walletTLSParams
+                   Nothing
+                   Nothing
 
 -- | A @Plugin@ to periodically compact & snapshot the acid-state database.
 acidStateSnapshots :: AcidState db
                    -> NewWalletBackendParams
                    -> DatabaseMode
                    -> Plugin Kernel.WalletMode
-acidStateSnapshots dbRef params dbMode = pure $ \_diffusion -> do
-    let opts = getWalletDbOptions params
-    modifyLoggerName (const "acid-state-checkpoint-plugin") $
-        createAndArchiveCheckpoints
-            dbRef
-            (walletAcidInterval opts)
-            dbMode
+acidStateSnapshots dbRef params dbMode = pure ("wallet-new acid snapshots",  const worker)
+  where
+    worker = do
+      let opts = getWalletDbOptions params
+      modifyLoggerName (const "acid-state-checkpoint-plugin") $
+          createAndArchiveCheckpoints
+              dbRef
+              (walletAcidInterval opts)
+              dbMode
 
 -- | A @Plugin@ to store updates proposal received from the blockchain
 updateWatcher :: Plugin Kernel.WalletMode
-updateWatcher = pure $ \_diffusion -> do
-    modifyLoggerName (const "update-watcher-plugin") $ do
-        w <- Kernel.getWallet
-        forever $ liftIO $ do
-            newUpdate <- WalletLayer.waitForUpdate w
-            logInfo "A new update was found!"
-            WalletLayer.addUpdate w . cpsSoftwareVersion $ newUpdate
+updateWatcher = pure ("update watcher", const worker)
+  where
+    worker = do
+      modifyLoggerName (const "update-watcher-plugin") $ do
+          w <- Kernel.getWallet
+          forever $ liftIO $ do
+              newUpdate <- WalletLayer.waitForUpdate w
+              logInfo "A new update was found!"
+              WalletLayer.addUpdate w . cpsSoftwareVersion $ newUpdate
