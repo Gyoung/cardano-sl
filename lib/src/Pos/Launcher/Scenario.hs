@@ -95,7 +95,7 @@ runNode' genesisConfig NodeResources {..} workers' plugins' = \diffusion -> do
 
     exitFailure
   where
-    reportHandler :: WorkMode ctx m => String -> SomeException -> m b
+    reportHandler :: String -> SomeException -> m b
     reportHandler action (SomeException e) = do
         loggerName <- askLoggerName
         let msg = "Worker/plugin with work name "%shown%" and logger name "%shown%" failed with exception: "%shown
