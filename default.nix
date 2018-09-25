@@ -153,9 +153,9 @@ let
       args: pkgs.callPackage ./scripts/launch/connect-to-cluster (args // { inherit gitrev binaryMethod forceDontCheck; } // walletConfig );
   other = rec {
     testlist = innerClosePropagation [] [ cardanoPkgs.cardano-sl ];
-    walletIntegrationTests = pkgs.callPackage ./scripts/test/wallet/integration { inherit gitrev useStackBinaries; };
+    walletIntegrationTests = pkgs.callPackage ./scripts/test/wallet/integration { inherit gitrev binaryMethod; };
     validateJson = pkgs.callPackage ./tools/src/validate-json {};
-    demoCluster = pkgs.callPackage ./scripts/launch/demo-cluster { inherit gitrev useStackBinaries; };
+    demoCluster = pkgs.callPackage ./scripts/launch/demo-cluster { inherit gitrev binaryMethod; };
     demoClusterDaedalusDev = pkgs.callPackage ./scripts/launch/demo-cluster { inherit gitrev useStackBinaries; disableClientAuth = true; numImportedWallets = 0; };
     demoClusterLaunchGenesis = pkgs.callPackage ./scripts/launch/demo-cluster {
       inherit gitrev useStackBinaries;

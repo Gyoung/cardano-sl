@@ -15,17 +15,17 @@
 , keepAlive ? true
 , launchGenesis ? false
 , configurationKey ? "default"
-, useStackBinaries ? false
+, binaryMethod
 , disableClientAuth ? false
 }:
 
 with localLib;
 
 let
-  stackExec = optionalString useStackBinaries "stack exec -- ";
+  stackExec = optionalString (binaryMethod == "stack") "stack exec -- ";
   cardanoDeps = with iohkPkgs; [ cardano-sl-tools cardano-sl-wallet-new-static cardano-sl-node-static ];
   demoClusterDeps = with pkgs; [ jq coreutils curl gnused openssl ];
-  allDeps =  demoClusterDeps ++ (optionals (!useStackBinaries ) cardanoDeps);
+  allDeps =  demoClusterDeps ++ (optionals (binaryMethod == "nix") cardanoDeps);
   walletConfig = {
     inherit stateDir disableClientAuth;
     topologyFile = walletTopologyFile;
@@ -39,7 +39,7 @@ let
   } else {
     environment = "demo";
   };
-  demoWallet = pkgs.callPackage ./../connect-to-cluster ({ inherit gitrev useStackBinaries; debug = false; } // walletEnvironment // walletConfig);
+  demoWallet = pkgs.callPackage ./../connect-to-cluster ({ inherit gitrev binaryMethod; debug = false; } // walletEnvironment // walletConfig);
   ifWallet = optionalString (runWallet);
   ifKeepAlive = optionalString (keepAlive);
   iohkPkgs = import ./../../.. { inherit config system pkgs gitrev; };
