@@ -14,17 +14,20 @@ in
 , gitrev ? localLib.commitIdFromGitRepo ./.git
 , buildId ? null
 , pkgs ? (import (localLib.fetchNixPkgs) { inherit system config; overlays = [ jemallocOverlay ]; })
-# profiling slows down performance by 50% so we don't enable it by default
 , forceDontCheck ? false
+# profiling slows down performance by 50% so we don't enable it by default
 , enableProfiling ? false
 , enableDebugging ? false
 , enableBenchmarks ? true
 , enablePhaseMetrics ? true
 , allowCustomConfig ? true
 , useStackBinaries ? false
+# one of "nix", "stack" or "path"
+, binaryMethod ? if useStackBinaries then "stack" else "nix"
 , fasterBuild ? false
 }:
 
+assert !useStackBinaries || (useStackBinaries && binaryMethod == "stack");
 with pkgs.lib;
 with pkgs.haskell.lib;
 
@@ -147,7 +150,7 @@ let
       walletConfigFile = ./custom-wallet-config.nix;
       walletConfig = if allowCustomConfig then (if builtins.pathExists walletConfigFile then import walletConfigFile else {}) else {};
     in
-      args: pkgs.callPackage ./scripts/launch/connect-to-cluster (args // { inherit gitrev useStackBinaries; } // walletConfig );
+      args: pkgs.callPackage ./scripts/launch/connect-to-cluster (args // { inherit gitrev binaryMethod forceDontCheck; } // walletConfig );
   other = rec {
     testlist = innerClosePropagation [] [ cardanoPkgs.cardano-sl ];
     walletIntegrationTests = pkgs.callPackage ./scripts/test/wallet/integration { inherit gitrev useStackBinaries; };
