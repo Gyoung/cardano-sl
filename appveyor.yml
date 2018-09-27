@@ -108,7 +108,8 @@ test_script:
 #   - stack hpc report cardano-sl cardano-sl-txp cardano-sl-core cardano-sl-db cardano-sl-update cardano-sl-infra cardano-sl-lrc cardano-sl-ssc
 # Retry transient failures due to https://github.com/haskell/cabal/issues/4005
   # We intentionally don't build auxx here, because this build is for installer.
-  - scripts\ci\appveyor-retry call stack --dump-logs install cardano-sl cardano-sl-tools cardano-sl-wallet cardano-sl-wallet-new
+  - scripts\ci\appveyor-retry call stack --dump-logs install cardano-sl-node
+  #cardano-sl-tools cardano-sl-wallet cardano-sl-wallet-new
       -j 3
       --no-terminal
       --local-bin-path %WORK_DIR%
@@ -128,9 +129,9 @@ test_script:
   - copy log-configs\daedalus.yaml daedalus\log-config-prod.yaml
   - copy lib\configuration.yaml daedalus\
   - copy lib\*genesis*.json daedalus\
-  - copy cardano-launcher.exe daedalus\
+  #- copy cardano-launcher.exe daedalus\
   - copy cardano-node.exe daedalus\
-  - copy cardano-x509-certificates.exe daedalus\
+  #- copy cardano-x509-certificates.exe daedalus\
   - cd daedalus
   - Echo %APPVEYOR_BUILD_VERSION% > build-id
   - Echo %APPVEYOR_REPO_COMMIT% > commit-id
